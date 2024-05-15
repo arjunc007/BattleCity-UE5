@@ -16,11 +16,13 @@ public class Shooting : MonoBehaviour {
 
     private Transform tank;
     private Animator anim;
+    PlayerInput input;
     private int alreadyShot = 0;
     private int maxBulletsAtOneTime = 1;
 
     void Start()
     {
+        input = GetComponent<PlayerInput>();
         tank = gameObject.GetComponent<Transform>();
         anim = gameObject.GetComponent<Animator>();
     }
@@ -28,7 +30,7 @@ public class Shooting : MonoBehaviour {
     void Update()
     {
         if ( !isTemplate && canShoot() && !anim.GetBool("hit") && 
-            (((!isNPC && player == 1 && Input.GetKeyDown(KeyCode.G)) || 
+            (((!isNPC && player == 1 && input.Fire) || 
             (!isNPC && player == 2 && Input.GetKeyDown(KeyCode.L)))
             || isNPC))
         {

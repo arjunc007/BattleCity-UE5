@@ -24,8 +24,11 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource notMovingSound;
     public AudioSource movingSound;
 
+    private PlayerInput input;
+
     void Start()
     {
+        input = GetComponent<PlayerInput>();
         anim = gameObject.GetComponent<Animator>();
         trans = gameObject.GetComponent<Transform>();
     }
@@ -57,15 +60,21 @@ public class PlayerMovement : MonoBehaviour
     {
         if (player == 1)
         {
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) axis_x = 0;
-            else if (Input.GetKey(KeyCode.D)) axis_x = 1;
-            else if (Input.GetKey(KeyCode.A)) axis_x = -1;
-            else axis_x = 0;
+            Debug.Log(input.MoveValue.ToString());
 
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S)) axis_y = 0;
-            else if (Input.GetKey(KeyCode.W)) axis_y = 1;
-            else if (Input.GetKey(KeyCode.S)) axis_y = -1;
-            else axis_y = 0;
+            if(Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
+            {
+                if (input.MoveValue.x > 0) axis_x = 1;
+                else if (input.MoveValue.x < 0) axis_x = -1;
+                else axis_x = 0;
+            }
+            else
+            {
+                if (input.MoveValue.y > 0) axis_y = 1;
+                else if (input.MoveValue.y < 0) axis_y = -1;
+                else axis_y = 0; 
+            }
+
         }
         if (player == 2)
         {
