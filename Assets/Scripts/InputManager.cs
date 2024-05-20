@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInput : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
     public TankInputActions playerControls;
     public Vector2 MoveValue { get; private set; }

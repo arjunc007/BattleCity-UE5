@@ -23,18 +23,13 @@ public class MapLoad : MonoBehaviour {
 
     public AudioSource levelStarting;
 
-    private bool multiplayer = false;
+    private bool _multiplayer = false;
     private int currentLevel;
 
-    void Start ()
+    public void StartGame (bool multiplayer)
     {
+        _multiplayer = multiplayer;
         LoadMap(level);
-
-        Application.targetFrameRate = 60;
-        QualitySettings.antiAliasing = 0;
-        QualitySettings.shadowCascades = 0;
-        QualitySettings.vSyncCount = 1;
-        QualitySettings.SetQualityLevel(2);
     }
 
     void Update()
@@ -43,22 +38,12 @@ public class MapLoad : MonoBehaviour {
         {
             LoadMap(level);
         }
-
-        CheckInput();
     }
 
-    private void CheckInput()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            multiplayer = !multiplayer;
-            LoadMap(1);
-        }
-    }
     // message receiver (getter) from "EnemySpawn"
     public void GetMultiplayer(ArgsPointer<bool> pointer)
     {
-        pointer.Args = new bool[] { multiplayer };
+        pointer.Args = new bool[] { _multiplayer };
     }
 
     private void LoadMap(bool won)
@@ -85,7 +70,7 @@ public class MapLoad : MonoBehaviour {
         player1.SendMessage("SetShooting", false);
         player1.SendMessage("SetShield", 6);
 
-        if (multiplayer)
+        if (_multiplayer)
         {
             player2.SendMessage("ResetPosition");
             player2.GetComponent<Animator>().SetBool("hit", false);

@@ -24,11 +24,11 @@ public class PlayerMovement : MonoBehaviour
     public AudioSource notMovingSound;
     public AudioSource movingSound;
 
-    private PlayerInput input;
+    private InputManager input;
 
     void Start()
     {
-        input = GetComponent<PlayerInput>();
+        input = GetComponent<InputManager>();
         anim = gameObject.GetComponent<Animator>();
         trans = gameObject.GetComponent<Transform>();
     }
@@ -62,32 +62,35 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log(input.MoveValue.ToString());
 
+            if(input.MoveValue == Vector2.zero) 
+            {
+                axis_x = 0;
+                axis_y = 0;
+            }
             if(Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
             {
                 if (input.MoveValue.x > 0) axis_x = 1;
                 else if (input.MoveValue.x < 0) axis_x = -1;
-                else axis_x = 0;
             }
             else
             {
                 if (input.MoveValue.y > 0) axis_y = 1;
                 else if (input.MoveValue.y < 0) axis_y = -1;
-                else axis_y = 0; 
             }
 
         }
-        if (player == 2)
-        {
-            if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow)) axis_x = 0;
-            else if (Input.GetKey(KeyCode.RightArrow)) axis_x = 1;
-            else if (Input.GetKey(KeyCode.LeftArrow)) axis_x = -1;
-            else axis_x = 0;
+        //if (player == 2)
+        //{
+        //    if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow)) axis_x = 0;
+        //    else if (Input.GetKey(KeyCode.RightArrow)) axis_x = 1;
+        //    else if (Input.GetKey(KeyCode.LeftArrow)) axis_x = -1;
+        //    else axis_x = 0;
 
-            if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow)) axis_y = 0;
-            else if (Input.GetKey(KeyCode.UpArrow)) axis_y = 1;
-            else if (Input.GetKey(KeyCode.DownArrow)) axis_y = -1;
-            else axis_y = 0;
-        }
+        //    if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow)) axis_y = 0;
+        //    else if (Input.GetKey(KeyCode.UpArrow)) axis_y = 1;
+        //    else if (Input.GetKey(KeyCode.DownArrow)) axis_y = -1;
+        //    else axis_y = 0;
+        //}
     }
 
     private void ChangeInputFromMultipleKeyPresses()
@@ -165,9 +168,10 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsSomethingPressed()
     {
-        return Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) ||
-            Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) ||
-             Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.UpArrow);
+        return true;
+        //return Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) ||
+        //    Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) ||
+        //     Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.UpArrow);
     }
 
 
