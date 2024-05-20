@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        input = GetComponent<InputManager>();
+        input = InputManager.Instance;
         anim = gameObject.GetComponent<Animator>();
         trans = gameObject.GetComponent<Transform>();
     }
@@ -60,8 +60,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (player == 1)
         {
-            Debug.Log(input.MoveValue.ToString());
-
             if(input.MoveValue == Vector2.zero) 
             {
                 axis_x = 0;

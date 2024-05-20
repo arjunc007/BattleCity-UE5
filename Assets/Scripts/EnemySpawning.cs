@@ -42,12 +42,10 @@ public class EnemySpawning : MonoBehaviour {
     void Update()
     {
         int tankCount = generatedEnemyFolder.GetComponentsInChildren<Transform>().Length;
-
-        ArgsPointer<bool> pointer = new ArgsPointer<bool>();
-        eagle.SendMessage("GetMultiplayer", pointer);
+        bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 
         // 4 tanks and 1 folder also counts, (if multiplayer, 6 tanks can be on screen)
-        if (next < 20 && (tankCount < 5 && !pointer[0] || tankCount < 7 && pointer[0])) 
+        if (next < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer)) 
         {
             anim.SetBool("spawn", true);
         }
@@ -85,7 +83,6 @@ public class EnemySpawning : MonoBehaviour {
         PushPosition();
 
         t.parent = generatedEnemyFolder;
-        t.SendMessage("SetIsTemplate", false);
 
         // every four enemies, one get bonus 
         if ((next + 1) % 4 == 0)

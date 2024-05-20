@@ -33,7 +33,6 @@ public class PowerUp : MonoBehaviour {
             {
                 if (!t.gameObject.name.Contains("Generated"))
                 {
-                    t.gameObject.SendMessage("SetIsTemplate", true);
                     t.GetComponent<Animator>().SetBool("isMoving", false);
                 }
             }
@@ -105,7 +104,6 @@ public class PowerUp : MonoBehaviour {
             {
                 if (!t.gameObject.name.Contains("Generated"))
                 {
-                    t.gameObject.SendMessage("SetIsTemplate", false);
                     t.GetComponent<Animator>().SetBool("isMoving", true);
                 }
             }

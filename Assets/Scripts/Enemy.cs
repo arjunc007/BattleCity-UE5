@@ -5,7 +5,6 @@ using System;
 public class Enemy : MonoBehaviour
 {
     public float MaxSpeed = 0.10f;
-    public bool isTemplate;
     public int bonus = 0;
     public int lives = 1;
 
@@ -32,15 +31,12 @@ public class Enemy : MonoBehaviour
         anim.SetInteger("bonus", bonus);
         anim.SetInteger("lives", lives);
 
-        if (!isTemplate)
-        {
-            anim.SetBool("isMoving", isMoving);
-        }
+        anim.SetBool("isMoving", isMoving);
     }
 
     public void FixedUpdate()
     {
-        if (!isTemplate && !anim.GetBool("hit"))
+        if (!anim.GetBool("hit"))
         {
             // AI
             
@@ -79,24 +75,21 @@ public class Enemy : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isTemplate)
+        if (tank.position.y < -11.5f && input_y < 0 || tank.position.y > 11.5f && input_y > 0)
         {
-            if (tank.position.y < -11.5f && input_y < 0 || tank.position.y > 11.5f && input_y > 0)
-            {
-                input_x = r.Next(50) % 3 - 1;
-                if (input_x == 0) input_y = -input_y;
-                else input_y = 0;
-            }
-            else if (tank.position.x < -11.5f && input_x < 0 || tank.position.x > 11.5f && input_x > 0)
-            {
-                input_y = r.Next(50) % 3 - 1;
-                if (input_y == 0) input_x = -input_x;
-                else input_x = 0;
-            }
-
-            anim.SetFloat("input_x", input_x);
-            anim.SetFloat("input_y", input_y);
+            input_x = r.Next(50) % 3 - 1;
+            if (input_x == 0) input_y = -input_y;
+            else input_y = 0;
         }
+        else if (tank.position.x < -11.5f && input_x < 0 || tank.position.x > 11.5f && input_x > 0)
+        {
+            input_y = r.Next(50) % 3 - 1;
+            if (input_y == 0) input_x = -input_x;
+            else input_x = 0;
+        }
+
+        anim.SetFloat("input_x", input_x);
+        anim.SetFloat("input_y", input_y);
     }
 
     private IEnumerator ChangePostition()
@@ -105,10 +98,7 @@ public class Enemy : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
 
-        if (!isTemplate)
-        {
-            SetRandomValues();
-        }
+        SetRandomValues();
 
         changingPos = false;
     }
@@ -122,14 +112,6 @@ public class Enemy : MonoBehaviour
         {
             SetRandomValues();
         }
-    }
-
-
-
-    //Message receiver from "Bullet"
-    public void SetIsTemplate(bool isTemplate)
-    {
-        this.isTemplate = isTemplate;
     }
 
     //Message receiver from "EnemySpawning"

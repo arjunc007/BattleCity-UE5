@@ -40,12 +40,6 @@ public class MapLoad : MonoBehaviour {
         }
     }
 
-    // message receiver (getter) from "EnemySpawn"
-    public void GetMultiplayer(ArgsPointer<bool> pointer)
-    {
-        pointer.Args = new bool[] { _multiplayer };
-    }
-
     private void LoadMap(bool won)
     {
         if (won)
@@ -54,7 +48,7 @@ public class MapLoad : MonoBehaviour {
         }
     }
 
-    private void LoadMap(int lev)
+    public void LoadMap(int lev)
     {
         currentLevel = lev;
         level = lev;
@@ -77,12 +71,10 @@ public class MapLoad : MonoBehaviour {
             player2.SendMessage("SetShooting", false);
             player2.SendMessage("SetShooting", false);
             player2.SendMessage("SetShield", 6);
-            player2.SendMessage("SetIsTemplate", false);
         }
         else
         {
             player2.GetComponent<Transform>().position = new Vector3(0, -155, 0);
-            player2.SendMessage("SetIsTemplate", true);
         }
 
 

@@ -10,7 +10,6 @@ public class Bullet : MonoBehaviour
     private float input_x;
     private float input_y;
 
-    public bool isTemplate;
     public bool isFriendly;
     public float speed;
 
@@ -28,29 +27,17 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isTemplate)
-        {
-            bool hit = anim.GetBool("hit");
+        bool hit = anim.GetBool("hit");
 
-            if (!hit)
-            {
-                trans.position += new Vector3(speed * input_x, speed * input_y, 0);
-            }
+        if (!hit)
+        {
+            trans.position += new Vector3(speed * input_x, speed * input_y, 0);
         }
     }
 
     private void DestroyAfterAnimationFinishes()
     {
-        if (!isTemplate)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    // message receiver from "Shooting" or "Enemy"
-    void SetIsTemplate(bool isTemplate)
-    {
-        this.isTemplate = isTemplate;
+        Destroy(gameObject);
     }
 
     // message receiver from "Shooting" or "Enemy"
@@ -81,7 +68,7 @@ public class Bullet : MonoBehaviour
     {
         Transform other = collider.GetComponent<Transform>();
 
-        if (other.name.Contains("Bullet") && !isTemplate)
+        if (other.name.Contains("Bullet"))
         {
             Destroy(gameObject);
             Destroy(other.gameObject);

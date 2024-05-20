@@ -3,12 +3,10 @@ using System.Collections;
 using System;
 using System.Threading;
 
-public class Shooting : MonoBehaviour {
-
-    public Transform generatedBulletFolder;
+public class Shooting : MonoBehaviour 
+{
     public Transform bullet;
     public Transform eagle;
-    public bool isTemplate;
     public bool isNPC;
     public int player;
     public AudioSource shotSound;
@@ -22,14 +20,14 @@ public class Shooting : MonoBehaviour {
 
     void Start()
     {
-        input = GetComponent<InputManager>();
+        input = InputManager.Instance;
         tank = gameObject.GetComponent<Transform>();
         anim = gameObject.GetComponent<Animator>();
     }
 
     void Update()
     {
-        if ( !isTemplate && canShoot() && !anim.GetBool("hit") && 
+        if (canShoot() && !anim.GetBool("hit") && 
             (((!isNPC && player == 1 && input.Fire) /*|| 
             (!isNPC && player == 2 && Input.GetKeyDown(KeyCode.L))*/)
             || isNPC))
@@ -61,8 +59,7 @@ public class Shooting : MonoBehaviour {
         // Creates new bullet
         Vector3 pos = tank.position + new Vector3(x, y, 0);
 
-        Transform newBullet = Instantiate(bullet, pos, tank.rotation) as Transform;
-        newBullet.parent = generatedBulletFolder;
+        Transform newBullet = Instantiate(bullet, pos, tank.rotation, GameManager.Instance.BulletHolder);
         newBullet.eulerAngles += new Vector3(0, 0, r);
 
         // Passes variables x and y
@@ -70,7 +67,6 @@ public class Shooting : MonoBehaviour {
         a.SetFloat("input_x", x);
         a.SetFloat("input_y", y);
 
-        a.gameObject.SendMessage("SetIsTemplate", false);
         a.gameObject.SendMessage("SetShooterTank", tank);
 
         // plays a sound
@@ -79,12 +75,6 @@ public class Shooting : MonoBehaviour {
         {
             shotSound.Play();
         }
-    }
-
-    //Message receiver from "Bullet"
-    public void SetIsTemplate(bool isTemplate)
-    {
-        this.isTemplate = isTemplate;
     }
     
     //Message receiver from "Bullet"
@@ -110,7 +100,7 @@ public class Shooting : MonoBehaviour {
 
     public void Destroy()
     {
-        if (isNPC/* && !isTemplate*/)
+        if (isNPC)
         {
             Destroy(gameObject);
         }
@@ -118,7 +108,6 @@ public class Shooting : MonoBehaviour {
         {
             tank.position = new Vector3(120, 20, 0);
             tank.SendMessage("SetLevel", 1);
-            tank.SendMessage("SetIsTemplate", true);
 
             ArgsPointer<int> pointer = new ArgsPointer<int>();
             tank.SendMessage("GetLives", pointer);
@@ -133,7 +122,6 @@ public class Shooting : MonoBehaviour {
                 {
                     tank.SendMessage("ResetPosition");
                     tank.GetComponent<Animator>().SetBool("hit", false);
-                    isTemplate = false;
                     alreadyShot = 0;
                     SendMessage("SetShield", 6);
                 });

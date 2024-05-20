@@ -4,8 +4,6 @@ using System;
 
 public class BulletWallDestroy : MonoBehaviour {
 
-    public Transform generatedWallsFolder;
-
     private Transform bullet;
     private Transform wall;
 
@@ -37,7 +35,7 @@ public class BulletWallDestroy : MonoBehaviour {
 
     private void destroyWallsAccordingToCoordinates(float x, float y)
     {
-        Transform[] ts = generatedWallsFolder.GetComponentsInChildren<Transform>();
+        Transform[] ts = GameManager.Instance.WallsHolder.GetComponentsInChildren<Transform>();
 
         Animator bulletAnim = gameObject.GetComponent<Animator>();
         float input_x = bulletAnim.GetFloat("input_x");
