@@ -13,8 +13,8 @@ public class Bullet : MonoBehaviour
     public bool isFriendly;
     public float speed;
 
-    public AudioSource brickHit;
-    public AudioSource ironHit;
+    public AudioClip brickHit;
+    public AudioClip ironHit;
 
     void Start()
     {
@@ -51,7 +51,7 @@ public class Bullet : MonoBehaviour
     {
         if (isFriendly)
         {
-            brickHit.Play();
+            AudioManager.Instance.PlayOneShot(brickHit);
         }
     }
 
@@ -60,7 +60,7 @@ public class Bullet : MonoBehaviour
     {
         if (isFriendly)
         {
-            ironHit.Play();
+            AudioManager.Instance.PlayOneShot(ironHit);
         }
     }
 

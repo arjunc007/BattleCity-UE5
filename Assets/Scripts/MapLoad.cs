@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
-public class MapLoad : MonoBehaviour {
-    
+public class MapLoad : MonoBehaviour
+{
+
     public Transform generatedWallFolder;
     public Transform generatedEnemyFolder;
     public Transform generatedBulletFolder;
@@ -21,23 +20,15 @@ public class MapLoad : MonoBehaviour {
     public Transform ice;
     public Transform water;
 
-    public AudioSource levelStarting;
+    public AudioClip levelStarting;
 
     private bool _multiplayer = false;
     private int currentLevel;
 
-    public void StartGame (bool multiplayer)
+    public void StartGame(bool multiplayer)
     {
         _multiplayer = multiplayer;
         LoadMap(level);
-    }
-
-    void Update()
-    {
-        if (currentLevel != level)
-        {
-            LoadMap(level);
-        }
     }
 
     private void LoadMap(bool won)
@@ -89,8 +80,8 @@ public class MapLoad : MonoBehaviour {
         powerUp.SendMessage("Reset");
 
         // play a sound
-        levelStarting.Play();
-        
+        AudioManager.Instance.PlayOneShot(levelStarting);
+
     }
 
     private void DeleteChilds(Transform folder)

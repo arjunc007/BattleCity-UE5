@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
-public class Eagle : MonoBehaviour {
+public class Eagle : MonoBehaviour
+{
 
-    public AudioSource eagleDestroy;
-    public AudioSource gameOver;
+    public AudioClip eagleDestroy;
+    public AudioClip gameOver;
 
     private Animator _animator;
 
@@ -23,9 +22,9 @@ public class Eagle : MonoBehaviour {
         {
             other.GetComponent<Animator>().SetBool("hit", true);
             SetDestroyed(true);
-            eagleDestroy.Play();
-            
-            this.DoAfter(1, () => gameOver.Play());
+            AudioManager.Instance.PlayOneShot(eagleDestroy);
+
+            this.DoAfter(1, () => AudioManager.Instance.PlayOneShot(gameOver));
         }
     }
 

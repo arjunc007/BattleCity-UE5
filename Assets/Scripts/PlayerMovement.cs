@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,20 +7,20 @@ public class PlayerMovement : MonoBehaviour
     private Animator anim;
     private Transform trans;
     public int player;
-    
+
     private bool isMoving;
 
     private float axis_x;
     private float axis_y;
-    
+
     private float input_x = 0;
     private float input_y = 1;
 
     private float look_x = 0;
     private float look_y = 1;
 
-    public AudioSource notMovingSound;
-    public AudioSource movingSound;
+    public AudioClip notMovingSound;
+    public AudioClip movingSound;
 
     private InputManager input;
 
@@ -60,12 +58,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (player == 1)
         {
-            if(input.MoveValue == Vector2.zero) 
+            if (input.MoveValue == Vector2.zero)
             {
                 axis_x = 0;
                 axis_y = 0;
             }
-            if(Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
+            if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
             {
                 if (input.MoveValue.x > 0) axis_x = 1;
                 else if (input.MoveValue.x < 0) axis_x = -1;
@@ -151,25 +149,20 @@ public class PlayerMovement : MonoBehaviour
         if (player == 1)
         {
             // Sounds moving and not moving
-            if (IsSomethingPressed() && !movingSound.isPlaying)
+            if (IsSomethingPressed() && !AudioManager.Instance.IsPlaying(movingSound))
             {
-                notMovingSound.Stop();
-                movingSound.Play();
+                AudioManager.Instance.PlaySFX(movingSound);
             }
-            else if (!IsSomethingPressed() && !notMovingSound.isPlaying)
+            else if (!IsSomethingPressed() && !AudioManager.Instance.IsPlaying(notMovingSound))
             {
-                notMovingSound.Play();
-                movingSound.Stop();
+                AudioManager.Instance.PlaySFX(notMovingSound);
             }
         }
     }
 
     private bool IsSomethingPressed()
     {
-        return true;
-        //return Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) ||
-        //    Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) ||
-        //     Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.UpArrow);
+        return axis_x != 0 || axis_y != 0;
     }
 
 

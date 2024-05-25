@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class BulletTankDestroy : MonoBehaviour {
+public class BulletTankDestroy : MonoBehaviour
+{
 
     public bool isFriendly;
-    public AudioSource tankDestroy;
-    public AudioSource ironHit;
+    public AudioClip tankDestroy;
+    public AudioClip ironHit;
     public Transform powerUp;
 
     public void OnTriggerEnter2D(Collider2D collider)
@@ -17,7 +17,7 @@ public class BulletTankDestroy : MonoBehaviour {
 
 
         // Show power up if was red
-        if (tank.name.Contains("Tank") && isFriendly 
+        if (tank.name.Contains("Tank") && isFriendly
             && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
             powerUp.SendMessage("ShowPowerUp", tankAnim.GetInteger("bonus"));
@@ -30,7 +30,7 @@ public class BulletTankDestroy : MonoBehaviour {
             && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
             bulletAnim.SetBool("hit", true);
-            
+
             if (!tank.name.Contains("Player") || !tankAnim.GetBool("shield"))
             {
                 // player
@@ -38,18 +38,18 @@ public class BulletTankDestroy : MonoBehaviour {
                 {
                     tank.SendMessage("Hit");
                     tankAnim.SetBool("hit", true);
-                    tankDestroy.Play();
+                    AudioManager.Instance.PlayOneShot(tankDestroy);
                 }
                 // not player
                 else if (tankAnim.GetInteger("lives") <= 1)
                 {
                     tankAnim.SetBool("hit", true);
-                    tankDestroy.Play();
+                    AudioManager.Instance.PlayOneShot(tankDestroy);
                 }
                 else
                 {
                     tank.SendMessage("SetLives", tankAnim.GetInteger("lives") - 1);
-                    ironHit.Play();
+                    AudioManager.Instance.PlayOneShot(ironHit);
                 }
             }
         }

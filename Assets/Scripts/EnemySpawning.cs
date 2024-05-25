@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class EnemySpawning : MonoBehaviour {
+public class EnemySpawning : MonoBehaviour
+{
 
     private int[] tanks;
     private Transform trans;
@@ -45,13 +45,9 @@ public class EnemySpawning : MonoBehaviour {
         bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 
         // 4 tanks and 1 folder also counts, (if multiplayer, 6 tanks can be on screen)
-        if (next < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer)) 
+        if (next < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer))
         {
             anim.SetBool("spawn", true);
-        }
-        else if (next >= 20 && tankCount <= 1)
-        {
-            eagle.SendMessage("LoadMap", true);
         }
     }
 

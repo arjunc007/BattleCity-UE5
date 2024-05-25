@@ -1,19 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
     [SerializeField] private MapLoad _mapLoader;
+    [SerializeField] private NetworkManager _netManager;
 
     [SerializeField] private Eagle _eagle;
     [SerializeField] private Transform[] _players;
 
     public bool IsMultiplayer = false;
-    
+
     [Header("UI")]
     [SerializeField] private GameObject _mainMenu;
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
@@ -22,11 +21,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
         }
-        else if(Instance != this) 
+        else if (Instance != this)
         {
             Destroy(gameObject);
         }
@@ -47,11 +46,12 @@ public class GameManager : MonoBehaviour
     {
         IsMultiplayer = multiplayer;
         _mapLoader.StartGame(multiplayer);
+        _netManager.StartHost();
     }
 
     public void FinishGame()
     {
-        
+
         _players[0].SendMessage("SetLevel", 1);
         _players[0].SendMessage("SetLives", 3);
         //player2.SendMessage("SetLevel", 1);

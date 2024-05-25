@@ -1,16 +1,14 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
-using System.Threading;
+﻿using System.Collections;
+using UnityEngine;
 
-public class Shooting : MonoBehaviour 
+public class Shooting : MonoBehaviour
 {
     public Transform bullet;
     public Transform eagle;
     public bool isNPC;
     public int player;
-    public AudioSource shotSound;
-    public AudioSource gameOver;
+    public AudioClip shotSound;
+    public AudioClip gameOver;
 
     private Transform tank;
     private Animator anim;
@@ -27,7 +25,7 @@ public class Shooting : MonoBehaviour
 
     void Update()
     {
-        if (canShoot() && !anim.GetBool("hit") && 
+        if (canShoot() && !anim.GetBool("hit") &&
             (((!isNPC && player == 1 && input.Fire) /*|| 
             (!isNPC && player == 2 && Input.GetKeyDown(KeyCode.L))*/)
             || isNPC))
@@ -73,10 +71,10 @@ public class Shooting : MonoBehaviour
 
         if (!isNPC)
         {
-            shotSound.Play();
+            AudioManager.Instance.PlayOneShot(shotSound);
         }
     }
-    
+
     //Message receiver from "Bullet"
     public void SetShooting(bool shouldAddBullet)
     {
@@ -118,7 +116,7 @@ public class Shooting : MonoBehaviour
             }
             else
             {
-                this.DoAfter(1.5f, () => 
+                this.DoAfter(1.5f, () =>
                 {
                     tank.SendMessage("ResetPosition");
                     tank.GetComponent<Animator>().SetBool("hit", false);
@@ -132,7 +130,7 @@ public class Shooting : MonoBehaviour
     IEnumerator FinishGameAfter(float time)
     {
         yield return new WaitForSeconds(time / 3);
-        gameOver.NotNull((t) => t.Play());
+        gameOver.NotNull((t) => AudioManager.Instance.PlayOneShot(t));
         yield return new WaitForSeconds(time / 3 * 2);
 
         anim.SetBool("hit", false);
