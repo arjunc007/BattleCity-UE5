@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     private void SendClientID(RpcParams rpcParams = default)
     {
         Debug.Log("Client connected with ID " + rpcParams.Receive.SenderClientId.ToString());
+        _lobbyMenu.AddClient();
     }
 
     public void StartGame()
