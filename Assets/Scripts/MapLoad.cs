@@ -49,24 +49,24 @@ public class MapLoad : MonoBehaviour
         DeleteChilds(generatedEnemyFolder);
         DeleteChilds(generatedBulletFolder);
 
-        player1.SendMessage("ResetPosition");
-        player1.GetComponent<Animator>().SetBool("hit", false);
-        player1.SendMessage("SetShooting", false);
-        player1.SendMessage("SetShooting", false);
-        player1.SendMessage("SetShield", 6);
+        //player1.SendMessage("ResetPosition");
+        //player1.GetComponent<Animator>().SetBool("hit", false);
+        //player1.SendMessage("SetShooting", false);
+        //player1.SendMessage("SetShooting", false);
+        //player1.SendMessage("SetShield", 6);
 
-        if (_multiplayer)
-        {
-            player2.SendMessage("ResetPosition");
-            player2.GetComponent<Animator>().SetBool("hit", false);
-            player2.SendMessage("SetShooting", false);
-            player2.SendMessage("SetShooting", false);
-            player2.SendMessage("SetShield", 6);
-        }
-        else
-        {
-            player2.GetComponent<Transform>().position = new Vector3(0, -155, 0);
-        }
+        //if (_multiplayer)
+        //{
+        //    player2.SendMessage("ResetPosition");
+        //    player2.GetComponent<Animator>().SetBool("hit", false);
+        //    player2.SendMessage("SetShooting", false);
+        //    player2.SendMessage("SetShooting", false);
+        //    player2.SendMessage("SetShield", 6);
+        //}
+        //else
+        //{
+        //    player2.GetComponent<Transform>().position = new Vector3(0, -155, 0);
+        //}
 
 
         // Enemy spawning reset

@@ -41,6 +41,10 @@ public class EnemySpawning : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.IsPlaying)
+        {
+            return;
+        }
         int tankCount = generatedEnemyFolder.GetComponentsInChildren<Transform>().Length;
         bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 

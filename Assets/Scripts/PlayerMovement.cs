@@ -1,17 +1,17 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.InputSystem.Processors;
+using UnityEngine.UIElements;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
+    public NetworkVariable<Vector2> Axis  = new NetworkVariable<Vector2>();
     public float MaxSpeed = 0.10f;
 
     private Animator anim;
-    private Transform trans;
     public int player;
 
     private bool isMoving;
-
-    private float axis_x;
-    private float axis_y;
 
     private float input_x = 0;
     private float input_y = 1;
@@ -24,16 +24,26 @@ public class PlayerMovement : MonoBehaviour
 
     private InputManager input;
 
+    public override void OnNetworkSpawn()
+    {
+        if(IsOwner)
+        {
+            SetStartPosition();
+        }
+    }
+
     void Start()
     {
         input = InputManager.Instance;
         anim = gameObject.GetComponent<Animator>();
-        trans = gameObject.GetComponent<Transform>();
     }
 
     void Update()
     {
-        CalculateAxis();
+        if (IsOwner)
+        {
+            CalculateAxis();
+        }
 
         anim.SetBool("isMoving", isMoving);
         anim.SetFloat("input_x", input_x);
@@ -54,82 +64,81 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void SetStartPosition()
+    {
+        Vector3 positionXY;
+        if (NetworkManager.Singleton.IsServer)
+        {
+            positionXY = GameManager.Instance.GetStartPosition(0);
+        }
+        else
+        {
+            positionXY = GameManager.Instance.GetStartPosition(1);
+        }
+
+        Vector3 pos = new Vector3(positionXY.x, positionXY.y, transform.position.z);
+        transform.position = pos;
+    }
+
     private void CalculateAxis()
     {
-        if (player == 1)
+        if (input.MoveValue == Vector2.zero)
         {
-            if (input.MoveValue == Vector2.zero)
-            {
-                axis_x = 0;
-                axis_y = 0;
-            }
-            if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
-            {
-                if (input.MoveValue.x > 0) axis_x = 1;
-                else if (input.MoveValue.x < 0) axis_x = -1;
-            }
-            else
-            {
-                if (input.MoveValue.y > 0) axis_y = 1;
-                else if (input.MoveValue.y < 0) axis_y = -1;
-            }
-
+            Axis.Value = Vector2.zero;
         }
-        //if (player == 2)
-        //{
-        //    if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow)) axis_x = 0;
-        //    else if (Input.GetKey(KeyCode.RightArrow)) axis_x = 1;
-        //    else if (Input.GetKey(KeyCode.LeftArrow)) axis_x = -1;
-        //    else axis_x = 0;
-
-        //    if (Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow)) axis_y = 0;
-        //    else if (Input.GetKey(KeyCode.UpArrow)) axis_y = 1;
-        //    else if (Input.GetKey(KeyCode.DownArrow)) axis_y = -1;
-        //    else axis_y = 0;
-        //}
+        if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
+        {
+            if (input.MoveValue.x > 0) Axis.Value = new Vector2(1, 0);
+            else if (input.MoveValue.x < 0) Axis.Value = new Vector2(-1, 0);
+        }
+        else
+        {
+            if (input.MoveValue.y > 0) Axis.Value = new Vector2(0, 1);
+            else if (input.MoveValue.y < 0) Axis.Value = new Vector2(0, 1);
+        }
     }
 
     private void ChangeInputFromMultipleKeyPresses()
     {
         // Movement changing when pressing keys for both directions
-        if (axis_x != 0 && axis_y != 0)
+        if (Axis.Value != Vector2.zero)
         {
             if (input_x == 0)
             {
-                input_x = axis_x;
+                input_x = Axis.Value.x;
                 input_y = 0;
             }
             if (input_y == 0)
             {
                 input_x = 0;
-                input_y = axis_y;
+                input_y = Axis.Value.y;
             }
         }
         // If at least one key pressed
-        else if (axis_x != 0 || axis_y != 0)
+        else if (Axis.Value.x != 0 || Axis.Value.y != 0)
         {
-            input_x = axis_x;
-            input_y = axis_y;
+            input_x = Axis.Value.x;
+            input_y = Axis.Value.y;
         }
     }
 
     private void ActualyChangingCoordinatesAccordingToInput()
     {
         // Movement when pressing a key
-        if (axis_x != 0 || axis_y != 0)
+        if (Axis.Value.x != 0 || Axis.Value.y != 0)
         {
             // Move object
             isMoving = true;
-            trans.position += new Vector3(MaxSpeed * input_x, MaxSpeed * input_y, 0);
+            transform.position += new Vector3(MaxSpeed * input_x, MaxSpeed * input_y, 0);
 
             // Align to cells
             if (input_x == 0)
             {
-                trans.position = new Vector3(Mathf.Round(trans.position.x), trans.position.y, 0);
+                transform.position = new Vector3(Mathf.Round(transform.position.x), transform.position.y, 0);
             }
             if (input_y == 0)
             {
-                trans.position = new Vector3(trans.position.x, Mathf.Round(trans.position.y), 0);
+                transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), 0);
             }
         }
         else
@@ -162,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsSomethingPressed()
     {
-        return axis_x != 0 || axis_y != 0;
+        return Axis.Value != Vector2.zero;
     }
 
 
@@ -171,11 +180,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (player == 1)
         {
-            trans.position = new Vector3(-4, -12, 0);
+            transform.position = new Vector3(-4, -12, 0);
         }
         else if (player == 2)
         {
-            trans.position = new Vector3(4, -12, 0);
+            transform.position = new Vector3(4, -12, 0);
         }
     }
 }
