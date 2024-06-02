@@ -53,6 +53,13 @@ public class LobbyManager : NetworkBehaviour
         }
     }
 
+    public void AddClient()
+    {
+        P2Image.gameObject.SetActive(true);
+        P2ReadyButton.gameObject.SetActive(true);
+        P2ReadyButtonText.text = _p2Ready.Value ? READY : UNREADY;
+    }
+
     private void OnDisable()
     {
         
