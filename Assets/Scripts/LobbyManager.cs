@@ -18,7 +18,7 @@ public class LobbyManager : NetworkBehaviour
 
     private const string READY = "READY";
     private const string UNREADY = "UNREADY";
-
+    
     public void Initialise(bool isHost)
     {
         if (isHost)
@@ -33,11 +33,23 @@ public class LobbyManager : NetworkBehaviour
             P2Image.gameObject.SetActive(false);
             P2ReadyButton.interactable = false;
             P1ReadyButtonText.text = UNREADY;
-            _p1Ready.Value = true;
+            _p1Ready.Value = false;
             _p2Ready.Value = false;  
         }
         else 
-        { 
+        {
+            P1Image.gameObject.SetActive(true);
+            P1ReadyButton.interactable = false;
+            P2ReadyButton.onClick.AddListener(() => {
+                _p2Ready.Value = !_p2Ready.Value;
+                P2ReadyButtonText.text = _p2Ready.Value ? READY : UNREADY;
+            });
+            P1ReadyButtonText.text = UNREADY;
+            P2Image.gameObject.SetActive(true);
+            P2ReadyButton.interactable = true;
+            P1ReadyButtonText.text = UNREADY;
+            _p1Ready.Value = false;
+            _p2Ready.Value = false;
         }
     }
 
@@ -49,9 +61,12 @@ public class LobbyManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(_p1Ready.Value  && _p2Ready.Value)
+        if (IsHost)
         {
-            GameManager.Instance.StartGame();
+            if (_p1Ready.Value && _p2Ready.Value)
+            {
+                GameManager.Instance.StartGame();
+            }
         }
     }
 }

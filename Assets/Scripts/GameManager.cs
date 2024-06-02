@@ -56,14 +56,24 @@ public class GameManager : MonoBehaviour
         else
         {
             _netManager.StartClient();
+            _lobbyMenu.gameObject.SetActive(true);
+            _lobbyMenu.Initialise(false);
+            SendClientID();
         }
         
         IsMultiplayer = true;
     }
 
+    [Rpc(SendTo.Server)]
+    private void SendClientID(RpcParams rpcParams = default)
+    {
+        Debug.Log("Client connected with ID " + rpcParams.Receive.SenderClientId.ToString());
+    }
+
     public void StartGame()
     {
         _mapLoader.StartGame(IsMultiplayer);
+        _lobbyMenu.gameObject.SetActive(false);
     }
 
     public Vector2 GetStartPosition(int playerId)
