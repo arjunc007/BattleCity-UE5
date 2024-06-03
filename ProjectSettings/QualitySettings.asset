@@ -4,7 +4,7 @@
 QualitySettings:
   m_ObjectHideFlags: 0
   serializedVersion: 5
-  m_CurrentQuality: 5
+  m_CurrentQuality: 2
   m_QualitySettings:
   - serializedVersion: 3
     name: Fastest
@@ -257,7 +257,7 @@ QualitySettings:
     shadows: 2
     shadowResolution: 2
     shadowProjection: 1
-    shadowCascades: 4
+    shadowCascades: 1
     shadowDistance: 150
     shadowNearPlaneOffset: 2
     shadowCascade2Split: 0.33333334
@@ -267,7 +267,7 @@ QualitySettings:
     globalTextureMipmapLimit: 0
     textureMipmapLimitSettings: []
     anisotropicTextures: 2
-    antiAliasing: 2
+    antiAliasing: 0
     softParticles: 1
     softVegetation: 1
     realtimeReflectionProbes: 1
@@ -301,23 +301,4 @@ QualitySettings:
     terrainMaxTrees: 50
     excludedTargetPlatforms: []
   m_TextureMipmapLimitGroupNames: []
-  m_PerPlatformDefaultQuality:
-    Android: 2
-    BlackBerry: 2
-    GLES Emulation: 5
-    Nintendo 3DS: 5
-    PS3: 5
-    PS4: 5
-    PSM: 5
-    PSP2: 2
-    Samsung TV: 2
-    Standalone: 5
-    Tizen: 2
-    WP8: 5
-    Web: 5
-    WebGL: 3
-    Wii U: 5
-    Windows Store Apps: 5
-    XBOX360: 5
-    XboxOne: 5
-    iPhone: 2
+  m_PerPlatformDefaultQuality: {}

@@ -1,9 +1,12 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
+
+    public NetworkVariable<bool> P1Ready = new();
+    public NetworkVariable<bool> P2Ready = new();
 
     [SerializeField] private MapLoad _mapLoader;
     [SerializeField] private NetworkManager _netManager;
@@ -21,6 +24,24 @@ public class GameManager : MonoBehaviour
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
     public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
+
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("Lobby Network Spawn");
+        if (IsServer)
+        {
+            //Server will be notified when a client connects
+            NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
+        }
+    }
+
+    private void OnClientConnectedCallback(ulong clientId)
+    {
+        if (IsServer)
+        {
+            _lobbyMenu.AddClient();
+        }
+    }
 
     private void Awake()
     {
@@ -51,21 +72,23 @@ public class GameManager : MonoBehaviour
         {
             _netManager.StartHost();
             _lobbyMenu.gameObject.SetActive(true);
+            _lobbyMenu.enabled = true;
             _lobbyMenu.Initialise(true);
         }
         else
         {
             _netManager.StartClient();
             _lobbyMenu.gameObject.SetActive(true);
+            _lobbyMenu.enabled = true;
             _lobbyMenu.Initialise(false);
-            SendClientID();
+            SendClientIDRpc();
         }
         
         IsMultiplayer = true;
     }
 
     [Rpc(SendTo.Server)]
-    private void SendClientID(RpcParams rpcParams = default)
+    private void SendClientIDRpc(RpcParams rpcParams = default)
     {
         Debug.Log("Client connected with ID " + rpcParams.Receive.SenderClientId.ToString());
         _lobbyMenu.AddClient();
