@@ -27,8 +27,6 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = true;
             P1ReadyButton.onClick.AddListener(() => { 
-                _p1Ready = !_p1Ready;
-                P1ReadyButtonText.text = _p1Ready ?  READY : UNREADY;
                 GameManager.Instance.ReadyPlayerRpc(0);
             });
             P1ReadyButtonText.text = UNREADY;
@@ -43,14 +41,13 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = false;
             P2ReadyButton.onClick.AddListener(() => {
-                _p2Ready = !_p2Ready;
-                P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
                 GameManager.Instance.ReadyPlayerRpc(1);
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
             P2ReadyButton.interactable = true;
             P1ReadyButtonText.text = UNREADY;
+            P2ReadyButton.gameObject.SetActive(true);
             _p2Ready = false;
         }
     }
@@ -67,10 +64,13 @@ public class LobbyManager : MonoBehaviour
         Debug.Log("Ready Player" + index);
         if (index == 0)
         {
-            
+            _p1Ready = !_p1Ready;
+            P1ReadyButtonText.text = _p1Ready ? READY : UNREADY;
         }
         else 
-        { 
+        {
+            _p2Ready = !_p2Ready;
+            P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
         }
     }
 
