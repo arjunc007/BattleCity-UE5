@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
-    
+    private bool _p1Ready;
+    private bool _p2Ready;
     [SerializeField] private Button P1ReadyButton;
     [SerializeField] private TextMeshProUGUI P1ReadyButtonText;
     [SerializeField] private Button P2ReadyButton;
@@ -26,29 +27,31 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = true;
             P1ReadyButton.onClick.AddListener(() => { 
-                GameManager.Instance.P1Ready.Value = !GameManager.Instance.P1Ready.Value;
-                P1ReadyButtonText.text = GameManager.Instance.P1Ready.Value ?  READY : UNREADY;
+                _p1Ready = !_p1Ready;
+                P1ReadyButtonText.text = _p1Ready ?  READY : UNREADY;
+                GameManager.Instance.ReadyPlayerRpc(0);
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(false);
             P2ReadyButton.interactable = false;
             P1ReadyButtonText.text = UNREADY;
-            GameManager.Instance.P1Ready.Value = false;
-            GameManager.Instance.P2Ready.Value = false;
+            _p1Ready = false;
+            _p2Ready = false;
         }
         else 
         {
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = false;
             P2ReadyButton.onClick.AddListener(() => {
-                GameManager.Instance.P2Ready.Value = !GameManager.Instance.P2Ready.Value;
-                P2ReadyButtonText.text = GameManager.Instance.P2Ready.Value ? READY : UNREADY;
+                _p2Ready = !_p2Ready;
+                P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
+                GameManager.Instance.ReadyPlayerRpc(1);
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
             P2ReadyButton.interactable = true;
             P1ReadyButtonText.text = UNREADY;
-            GameManager.Instance.P2Ready.Value = false;
+            _p2Ready = false;
         }
     }
 
@@ -56,7 +59,19 @@ public class LobbyManager : MonoBehaviour
     {
         P2Image.gameObject.SetActive(true);
         P2ReadyButton.gameObject.SetActive(true);
-        P2ReadyButtonText.text = GameManager.Instance.P2Ready.Value ? READY : UNREADY;
+        P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
+    }
+
+    public void ReadyPlayer(int index)
+    {
+        Debug.Log("Ready Player" + index);
+        if (index == 0)
+        {
+            
+        }
+        else 
+        { 
+        }
     }
 
     private void OnDisable()
@@ -69,7 +84,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsHost)
         {
-            if (GameManager.Instance.P1Ready.Value && GameManager.Instance.P2Ready.Value)
+            if (_p1Ready && _p2Ready)
             {
                 GameManager.Instance.StartGame();
             }

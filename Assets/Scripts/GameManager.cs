@@ -5,9 +5,6 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
 
-    public NetworkVariable<bool> P1Ready = new();
-    public NetworkVariable<bool> P2Ready = new();
-
     [SerializeField] private MapLoad _mapLoader;
     [SerializeField] private NetworkManager _netManager;
 
@@ -77,14 +74,23 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            _netManager.StartClient();
+            if (!NetworkManager.Singleton.StartClient())
+            {
+                Debug.LogError("Failed to start client.");
+                return;
+            }
             _lobbyMenu.gameObject.SetActive(true);
             _lobbyMenu.enabled = true;
             _lobbyMenu.Initialise(false);
-            SendClientIDRpc();
+            NetworkManager.OnClientStarted += NetworkManager_OnClientStarted; ;
         }
         
         IsMultiplayer = true;
+    }
+
+    private void NetworkManager_OnClientStarted()
+    {
+        SendClientIDRpc();
     }
 
     [Rpc(SendTo.Server)]
@@ -92,6 +98,12 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Client connected with ID " + rpcParams.Receive.SenderClientId.ToString());
         _lobbyMenu.AddClient();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ReadyPlayerRpc(int player)
+    {
+        _lobbyMenu.ReadyPlayer(player);
     }
 
     public void StartGame()
