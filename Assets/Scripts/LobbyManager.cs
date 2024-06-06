@@ -9,6 +9,7 @@ public class LobbyManager : MonoBehaviour
 {
     private bool _p1Ready;
     private bool _p2Ready;
+    [SerializeField] private Button StartButton;
     [SerializeField] private Button P1ReadyButton;
     [SerializeField] private TextMeshProUGUI P1ReadyButtonText;
     [SerializeField] private Button P2ReadyButton;
@@ -31,8 +32,8 @@ public class LobbyManager : MonoBehaviour
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(false);
-            P2ReadyButton.interactable = false;
-            P1ReadyButtonText.text = UNREADY;
+            P1ReadyButton.interactable = false;
+            P2ReadyButton.gameObject.SetActive(false);
             _p1Ready = false;
             _p2Ready = false;
         }
@@ -46,7 +47,7 @@ public class LobbyManager : MonoBehaviour
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
             P2ReadyButton.interactable = true;
-            P1ReadyButtonText.text = UNREADY;
+            P2ReadyButtonText.text = UNREADY;
             P2ReadyButton.gameObject.SetActive(true);
             _p2Ready = false;
         }

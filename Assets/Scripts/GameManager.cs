@@ -34,6 +34,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnClientConnectedCallback(ulong clientId)
     {
+        Debug.Log($"{clientId} is connected.");
         if (IsServer)
         {
             _lobbyMenu.AddClient();
@@ -68,8 +69,6 @@ public class GameManager : NetworkBehaviour
         if(isHost)
         {
             _netManager.StartHost();
-            _lobbyMenu.gameObject.SetActive(true);
-            _lobbyMenu.enabled = true;
             _lobbyMenu.Initialise(true);
         }
         else
@@ -79,25 +78,11 @@ public class GameManager : NetworkBehaviour
                 Debug.LogError("Failed to start client.");
                 return;
             }
-            _lobbyMenu.gameObject.SetActive(true);
-            _lobbyMenu.enabled = true;
+            
             _lobbyMenu.Initialise(false);
-            NetworkManager.OnClientStarted += NetworkManager_OnClientStarted; ;
         }
-        
+        _lobbyMenu.gameObject.SetActive(true);
         IsMultiplayer = true;
-    }
-
-    private void NetworkManager_OnClientStarted()
-    {
-        SendClientIDRpc();
-    }
-
-    [Rpc(SendTo.Server)]
-    private void SendClientIDRpc(RpcParams rpcParams = default)
-    {
-        Debug.Log("Client connected with ID " + rpcParams.Receive.SenderClientId.ToString());
-        _lobbyMenu.AddClient();
     }
 
     [Rpc(SendTo.ClientsAndHost)]

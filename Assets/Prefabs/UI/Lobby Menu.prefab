@@ -434,7 +434,6 @@ GameObject:
   - component: {fileID: 8962481975565335732}
   - component: {fileID: 6981313030728801326}
   - component: {fileID: 8385114016538265312}
-  - component: {fileID: 2235062231605367461}
   - component: {fileID: 1808225171135311989}
   m_Layer: 5
   m_Name: P2Ready
@@ -501,19 +500,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2235062231605367461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6812632090532031208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ControlPath: <Keyboard>/enter
 --- !u!114 &1808225171135311989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -739,7 +725,6 @@ GameObject:
   - component: {fileID: 5146103078239813293}
   - component: {fileID: 7138631533016783701}
   - component: {fileID: 2913910258419922847}
-  - component: {fileID: 8269716741200271786}
   - component: {fileID: 6764943291609671020}
   m_Layer: 5
   m_Name: P1Ready
@@ -806,19 +791,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8269716741200271786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8827220950197630708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ControlPath: <Keyboard>/enter
 --- !u!114 &6764943291609671020
 MonoBehaviour:
   m_ObjectHideFlags: 0
