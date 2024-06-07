@@ -28,7 +28,7 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = true;
             P1ReadyButton.onClick.AddListener(() => { 
-                GameManager.Instance.ReadyPlayerRpc();
+                GameManager.Instance.ReadyPlayerRpc(NetworkManager.Singleton.LocalClientId);
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(false);
@@ -42,7 +42,7 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = false;
             P2ReadyButton.onClick.AddListener(() => {
-                GameManager.Instance.ReadyPlayerRpc();
+                GameManager.Instance.ReadyPlayerRpc(NetworkManager.Singleton.LocalClientId);
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
