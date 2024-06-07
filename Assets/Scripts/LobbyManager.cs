@@ -28,11 +28,11 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = true;
             P1ReadyButton.onClick.AddListener(() => { 
-                GameManager.Instance.ReadyPlayerRpc(0);
+                GameManager.Instance.ReadyPlayerRpc();
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(false);
-            P1ReadyButton.interactable = false;
+            P2ReadyButton.interactable = false;
             P2ReadyButton.gameObject.SetActive(false);
             _p1Ready = false;
             _p2Ready = false;
@@ -42,7 +42,7 @@ public class LobbyManager : MonoBehaviour
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = false;
             P2ReadyButton.onClick.AddListener(() => {
-                GameManager.Instance.ReadyPlayerRpc(1);
+                GameManager.Instance.ReadyPlayerRpc();
             });
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
@@ -60,10 +60,10 @@ public class LobbyManager : MonoBehaviour
         P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
     }
 
-    public void ReadyPlayer(int index)
+    public void TogglePlayerReady(ulong clientId)
     {
-        Debug.Log("Ready Player" + index);
-        if (index == 0)
+        Debug.Log("Ready Player" + clientId);
+        if (clientId == 0)
         {
             _p1Ready = !_p1Ready;
             P1ReadyButtonText.text = _p1Ready ? READY : UNREADY;
@@ -73,22 +73,15 @@ public class LobbyManager : MonoBehaviour
             _p2Ready = !_p2Ready;
             P2ReadyButtonText.text = _p2Ready ? READY : UNREADY;
         }
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            StartButton.gameObject.SetActive(_p1Ready && _p2Ready);
+        }
     }
 
     private void OnDisable()
     {
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (NetworkManager.Singleton.IsHost)
-        {
-            if (_p1Ready && _p2Ready)
-            {
-                GameManager.Instance.StartGame();
-            }
-        }
     }
 }

@@ -86,9 +86,9 @@ public class GameManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void ReadyPlayerRpc(int player)
+    public void ReadyPlayerRpc()
     {
-        _lobbyMenu.ReadyPlayer(player);
+        _lobbyMenu.TogglePlayerReady(_netManager.LocalClientId);
     }
 
     public void StartGame()
