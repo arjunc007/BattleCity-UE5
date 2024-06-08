@@ -4,18 +4,15 @@ using System;
 
 public class PowerUp : MonoBehaviour {
 
-    public AudioSource powerUpTaken;
-    public AudioSource powerUpShowUp;
+    public AudioClip powerUpTaken;
+    public AudioClip powerUpShowUp;
     public int bonus = 1;
-    public Transform generatedEnemyFolder;
 
-    private Transform trans;
     private System.Random r;
     public int freezeTime = 0;
 
     void Start()
     {
-        trans = gameObject.GetComponent<Transform>();
         r = new System.Random();
 
         Reset();
@@ -25,7 +22,7 @@ public class PowerUp : MonoBehaviour {
     {
         gameObject.GetComponent<Animator>().SetFloat("bonus", bonus);
 
-        Transform[] ts = generatedEnemyFolder.GetComponentsInChildren<Transform>();
+        Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
 
         if (freezeTime > 0)
         {
@@ -42,15 +39,15 @@ public class PowerUp : MonoBehaviour {
     // Message receiver from "MapLoad"
     public void Reset()
     {
-        trans.position = new Vector3(0, 100, 0);
+        transform.position = new Vector3(0, 100, 0);
         freezeTime = -100;
     }
 
     // Message receiver from "Player"
     public void HidePowerUp()
     {
-        powerUpTaken.Play();
-        trans.position = new Vector3(0, 100, 0);
+        AudioManager.Instance.PlayOneShot(powerUpTaken);
+        transform.position = new Vector3(0, 100, 0);
     }
 
     // Message receiver from "BulletTankDestroy"
@@ -59,15 +56,15 @@ public class PowerUp : MonoBehaviour {
         if (bonus > 0)
         {
             this.bonus = bonus;
-            powerUpShowUp.Play();
-            trans.position = new Vector3(GetRanCoord(), GetRanCoord(), 0);
+            AudioManager.Instance.PlayOneShot(powerUpShowUp);
+            transform.position = new Vector3(GetRanCoord(), GetRanCoord(), 0);
         }
     }
 
     // Message receiver from "Player" (PowerUp)
     public void DestroyAllTanks()
     {
-        Transform[] ts = generatedEnemyFolder.GetComponentsInChildren<Transform>();
+        Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
 
         foreach (var t in ts)
         {
@@ -99,7 +96,7 @@ public class PowerUp : MonoBehaviour {
         }
         if (freezeTime <= 0)
         {
-            Transform[] ts = generatedEnemyFolder.GetComponentsInChildren<Transform>();
+            Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
             foreach (var t in ts)
             {
                 if (!t.gameObject.name.Contains("Generated"))

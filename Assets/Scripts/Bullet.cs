@@ -4,7 +4,6 @@ public class Bullet : MonoBehaviour
 {
 
     private Animator anim;
-    private Transform trans;
     private Transform tank;
 
     private float input_x;
@@ -19,7 +18,6 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
-        trans = gameObject.GetComponent<Transform>();
 
         input_x = anim.GetFloat("input_x");
         input_y = anim.GetFloat("input_y");
@@ -31,7 +29,7 @@ public class Bullet : MonoBehaviour
 
         if (!hit)
         {
-            trans.position += new Vector3(speed * input_x, speed * input_y, 0);
+            transform.position += new Vector3(speed * input_x, speed * input_y, 0);
         }
     }
 

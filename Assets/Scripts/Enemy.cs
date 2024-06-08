@@ -8,7 +8,6 @@ public class Enemy : MonoBehaviour
     public int bonus = 0;
     public int lives = 1;
 
-    private Transform tank;
     private Animator anim;
 
     private float input_x = 0;
@@ -20,7 +19,6 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        tank = gameObject.GetComponent<Transform>();
         anim = gameObject.GetComponent<Animator>();
     }
 
@@ -50,16 +48,16 @@ public class Enemy : MonoBehaviour
             {
                 // Move object
                 isMoving = true;
-                tank.position += new Vector3(MaxSpeed * input_x, MaxSpeed * input_y, 0);
+                transform.position += new Vector3(MaxSpeed * input_x, MaxSpeed * input_y, 0);
 
                 // Align to cells
                 if (input_x == 0)
                 {
-                    tank.position = new Vector3(Mathf.Round(tank.position.x), tank.position.y, 0);
+                    transform.position = new Vector3(Mathf.Round(transform.position.x), transform.position.y, 0);
                 }
                 if (input_y == 0)
                 {
-                    tank.position = new Vector3(tank.position.x, Mathf.Round(tank.position.y), 0);
+                    transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), 0);
                 }
             }
             else
@@ -75,13 +73,13 @@ public class Enemy : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (tank.position.y < -11.5f && input_y < 0 || tank.position.y > 11.5f && input_y > 0)
+        if (transform.position.y < -11.5f && input_y < 0 || transform.position.y > 11.5f && input_y > 0)
         {
             input_x = r.Next(50) % 3 - 1;
             if (input_x == 0) input_y = -input_y;
             else input_y = 0;
         }
-        else if (tank.position.x < -11.5f && input_x < 0 || tank.position.x > 11.5f && input_x > 0)
+        else if (transform.position.x < -11.5f && input_x < 0 || transform.position.x > 11.5f && input_x > 0)
         {
             input_y = r.Next(50) % 3 - 1;
             if (input_y == 0) input_x = -input_x;

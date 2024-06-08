@@ -4,7 +4,6 @@ public class EnemySpawning : MonoBehaviour
 {
 
     private int[] tanks;
-    private Transform trans;
     private Animator anim;
     System.Random r;
 
@@ -18,7 +17,6 @@ public class EnemySpawning : MonoBehaviour
 
     void Start()
     {
-        trans = gameObject.GetComponent<Transform>();
         anim = gameObject.GetComponent<Animator>();
         r = new System.Random();
 
@@ -34,8 +32,7 @@ public class EnemySpawning : MonoBehaviour
 
     public void Reset()
     {
-        if (trans == null) trans = gameObject.GetComponent<Transform>();
-        trans.position = new Vector3(-12, 12, 0);
+        transform.position = new Vector3(-12, 12, 0);
         next = 0;
     }
 
@@ -64,19 +61,19 @@ public class EnemySpawning : MonoBehaviour
 
         if (tanks[next] == 1)
         {
-            t = Instantiate(easyTank, trans.position, easyTank.rotation) as Transform;
+            t = Instantiate(easyTank, transform.position, easyTank.rotation) as Transform;
         }
         else if (tanks[next] == 2)
         {
-            t = Instantiate(fastTank, trans.position, fastTank.rotation) as Transform;
+            t = Instantiate(fastTank, transform.position, fastTank.rotation) as Transform;
         }
         else if (tanks[next] == 3)
         {
-            t = Instantiate(mediumTank, trans.position, mediumTank.rotation) as Transform;
+            t = Instantiate(mediumTank, transform.position, mediumTank.rotation) as Transform;
         }
         else if (tanks[next] == 4)
         {
-            t = Instantiate(strongTank, trans.position, strongTank.rotation) as Transform;
+            t = Instantiate(strongTank, transform.position, strongTank.rotation) as Transform;
             t.SendMessage("SetLives", 5);
         }
 
@@ -95,7 +92,7 @@ public class EnemySpawning : MonoBehaviour
 
     private void PushPosition()
     {
-        trans.position += new Vector3(12, 0, 0);
-        if (trans.position.x > 12) trans.position = new Vector3(-12, 12, 0);
+        transform.position += new Vector3(12, 0, 0);
+        if (transform.position.x > 12) transform.position = new Vector3(-12, 12, 0);
     }
 }
