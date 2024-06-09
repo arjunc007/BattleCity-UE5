@@ -123,7 +123,8 @@ GameObject:
   - component: {fileID: 6929453648322962135}
   - component: {fileID: 6975786677925126238}
   - component: {fileID: 311507855605099897}
-  - component: {fileID: -2372580107974815787}
+  - component: {fileID: -8880597875733911959}
+  - component: {fileID: -8906391695648625464}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -325,8 +326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0c28b11f99c5848aaa27476bc26268, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Position:
-    m_InternalValue: {x: 0, y: 0, z: 0}
   MaxSpeed: 0.08
   player: 1
   notMovingSound: {fileID: 8300000, guid: d75b388b940f8524ca784c7d7515bdb6, type: 3}
@@ -371,7 +370,7 @@ MonoBehaviour:
     type: 3}
   shieldAnim: {fileID: 562959829445006214}
   shieldTime: 0
---- !u!114 &-2372580107974815787
+--- !u!114 &-8880597875733911959
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -380,19 +379,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 8209070914806190893}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -402,3 +401,15 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-8906391695648625464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209070914806190893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
