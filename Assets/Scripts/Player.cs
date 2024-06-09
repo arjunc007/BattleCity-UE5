@@ -26,17 +26,17 @@ public class Player : MonoBehaviour
             gameObject.SendMessage("SetBullet", bulletWeak);
             gameObject.SendMessage("SetMaxBullets", 1);
         }
-        if (level == 2)
+        else if (level == 2)
         {
             gameObject.SendMessage("SetBullet", bulletFast);
             gameObject.SendMessage("SetMaxBullets", 1);
         }
-        if (level == 3)
+        else if (level == 3)
         {
             gameObject.SendMessage("SetBullet", bulletFast);
             gameObject.SendMessage("SetMaxBullets", 2);
         }
-        if (level == 4)
+        else if (level == 4)
         {
             gameObject.SendMessage("SetBullet", bulletStrong);
             gameObject.SendMessage("SetMaxBullets", 2);

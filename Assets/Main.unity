@@ -917,7 +917,7 @@ MonoBehaviour:
   generatedEnemyFolder: {fileID: 99033113}
   generatedBulletFolder: {fileID: 1503421058}
   spawnLocation: {fileID: 1938287973}
-  powerUp: {fileID: 0}
+  powerUp: {fileID: 314446465254358605, guid: e26873f0ae77ab64d902a81c58694f2d, type: 3}
   player1: {fileID: 848667649}
   player2: {fileID: 369978032}
   level: 1

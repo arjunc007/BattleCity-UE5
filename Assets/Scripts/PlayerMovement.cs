@@ -26,8 +26,10 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        Debug.Log($"Player Spawned");
         if(IsOwner)
         {
+            Debug.Log($"Player Is Owner");
             SetStartPosition();
         }
     }
@@ -69,10 +71,12 @@ public class PlayerMovement : NetworkBehaviour
         Vector3 positionXY;
         if (NetworkManager.Singleton.IsServer)
         {
+            Debug.Log($"Player Position 1 Set");
             positionXY = GameManager.Instance.GetStartPosition(0);
         }
         else
         {
+            Debug.Log($"Player Position 2 Set");
             positionXY = GameManager.Instance.GetStartPosition(1);
         }
 

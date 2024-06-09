@@ -7,7 +7,7 @@ public class MapLoad : MonoBehaviour
     public Transform generatedEnemyFolder;
     public Transform generatedBulletFolder;
     public Transform spawnLocation;
-    public Transform powerUp;
+    public Transform powerUpPrefab;
 
     public Transform player1;
     public Transform player2;
@@ -22,6 +22,7 @@ public class MapLoad : MonoBehaviour
 
     public AudioClip levelStarting;
 
+    private PowerUp _powerUp;
     private bool _multiplayer = false;
     private int currentLevel;
 
@@ -29,6 +30,7 @@ public class MapLoad : MonoBehaviour
     {
         _multiplayer = multiplayer;
         LoadMap(level);
+        _powerUp = Instantiate(powerUpPrefab).GetComponent<PowerUp>();
     }
 
     private void LoadMap(bool won)
@@ -77,7 +79,7 @@ public class MapLoad : MonoBehaviour
         GenerateObjects(m);
 
         // powerUp reset
-        powerUp.SendMessage("Reset");
+        _powerUp.Reset();
 
         // play a sound
         AudioManager.Instance.PlayOneShot(levelStarting);
