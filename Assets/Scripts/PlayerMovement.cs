@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    public NetworkVariable<Vector2> Axis  = new NetworkVariable<Vector2>();
+    Vector2 Axis;
     public float MaxSpeed = 0.10f;
 
     private Animator anim;
@@ -41,10 +41,9 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-        if (IsOwner)
-        {
-            CalculateAxis();
-        }
+        if (!IsLocalPlayer || !IsOwner || !GameManager.Instance.IsPlaying) return;
+
+        CalculateAxis();
 
         anim.SetBool("isMoving", isMoving);
         anim.SetFloat("input_x", input_x);
@@ -55,6 +54,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public void FixedUpdate()
     {
+        if (!IsLocalPlayer || !IsOwner || !GameManager.Instance.IsPlaying) return;
         // Do everything only then if not hit
         if (!anim.GetBool("hit"))
         {
@@ -69,48 +69,48 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (input.MoveValue == Vector2.zero)
         {
-            Axis.Value = Vector2.zero;
+            Axis = Vector2.zero;
         }
         if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
         {
-            if (input.MoveValue.x > 0) Axis.Value = new Vector2(1, 0);
-            else if (input.MoveValue.x < 0) Axis.Value = new Vector2(-1, 0);
+            if (input.MoveValue.x > 0) Axis = new Vector2(1, 0);
+            else if (input.MoveValue.x < 0) Axis = new Vector2(-1, 0);
         }
         else
         {
-            if (input.MoveValue.y > 0) Axis.Value = new Vector2(0, 1);
-            else if (input.MoveValue.y < 0) Axis.Value = new Vector2(0, 1);
+            if (input.MoveValue.y > 0) Axis = new Vector2(0, 1);
+            else if (input.MoveValue.y < 0) Axis = new Vector2(0, 1);
         }
     }
 
     private void ChangeInputFromMultipleKeyPresses()
     {
         // Movement changing when pressing keys for both directions
-        if (Axis.Value != Vector2.zero)
+        if (Axis != Vector2.zero)
         {
             if (input_x == 0)
             {
-                input_x = Axis.Value.x;
+                input_x = Axis.x;
                 input_y = 0;
             }
             if (input_y == 0)
             {
                 input_x = 0;
-                input_y = Axis.Value.y;
+                input_y = Axis.y;
             }
         }
         // If at least one key pressed
-        else if (Axis.Value.x != 0 || Axis.Value.y != 0)
+        else if (Axis.x != 0 || Axis.y != 0)
         {
-            input_x = Axis.Value.x;
-            input_y = Axis.Value.y;
+            input_x = Axis.x;
+            input_y = Axis.y;
         }
     }
 
     private void ActualyChangingCoordinatesAccordingToInput()
     {
         // Movement when pressing a key
-        if (Axis.Value.x != 0 || Axis.Value.y != 0)
+        if (Axis.x != 0 || Axis.y != 0)
         {
             // Move object
             isMoving = true;
@@ -156,7 +156,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private bool IsSomethingPressed()
     {
-        return Axis.Value != Vector2.zero;
+        return Axis != Vector2.zero;
     }
 
 

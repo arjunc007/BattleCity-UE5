@@ -105,6 +105,7 @@ public class GameManager : NetworkBehaviour
         Debug.Log("Start Game");
         _mapLoader.StartGame(IsMultiplayer);
         _lobbyMenu.gameObject.SetActive(false);
+        IsPlaying = true;
     }
 
     public Vector2 GetStartPosition(int playerId)
