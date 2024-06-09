@@ -79,14 +79,15 @@ public class PlayerMovement : NetworkBehaviour
         else
         {
             if (input.MoveValue.y > 0) Axis = new Vector2(0, 1);
-            else if (input.MoveValue.y < 0) Axis = new Vector2(0, 1);
+            else if (input.MoveValue.y < 0) Axis = new Vector2(0, -1);
         }
+        Debug.Log("Axis = " + Axis);
     }
 
     private void ChangeInputFromMultipleKeyPresses()
     {
         // Movement changing when pressing keys for both directions
-        if (Axis != Vector2.zero)
+        if (Axis.x != 0 && Axis.y != 0)
         {
             if (input_x == 0)
             {
@@ -105,6 +106,8 @@ public class PlayerMovement : NetworkBehaviour
             input_x = Axis.x;
             input_y = Axis.y;
         }
+
+        Debug.Log("Input XY = " + input_x + ", " + input_y);
     }
 
     private void ActualyChangingCoordinatesAccordingToInput()

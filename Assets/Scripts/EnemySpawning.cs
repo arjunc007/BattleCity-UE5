@@ -38,6 +38,7 @@ public class EnemySpawning : MonoBehaviour
 
     void Update()
     {
+        return;
         if (!GameManager.Instance.IsPlaying)
         {
             return;
@@ -55,6 +56,7 @@ public class EnemySpawning : MonoBehaviour
     // Called from animation event
     private void SpawnEnemy()
     {
+        return;
         anim.SetBool("spawn", false);
 
         Transform t = null;

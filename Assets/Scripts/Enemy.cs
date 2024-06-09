@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        return;
         anim.SetFloat("input_x", input_x);
         anim.SetFloat("input_y", input_y);
         anim.SetInteger("bonus", bonus);
@@ -34,6 +35,7 @@ public class Enemy : MonoBehaviour
 
     public void FixedUpdate()
     {
+        return;
         if (!anim.GetBool("hit"))
         {
             // AI
