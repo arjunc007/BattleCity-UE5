@@ -26,11 +26,10 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log($"Player Spawned");
-        if(IsOwner)
+        Debug.Log($"Player {OwnerClientId} Spawned");
+        if(IsServer)
         {
-            Debug.Log($"Player Is Owner");
-            SetStartPosition();
+            ResetPosition();
         }
     }
 
@@ -64,24 +63,6 @@ public class PlayerMovement : NetworkBehaviour
             SetLookingDirection();
             ApplyMovementSound();
         }
-    }
-
-    private void SetStartPosition()
-    {
-        Vector3 positionXY;
-        if (NetworkManager.Singleton.IsServer)
-        {
-            Debug.Log($"Player Position 1 Set");
-            positionXY = GameManager.Instance.GetStartPosition(0);
-        }
-        else
-        {
-            Debug.Log($"Player Position 2 Set");
-            positionXY = GameManager.Instance.GetStartPosition(1);
-        }
-
-        Vector3 pos = new Vector3(positionXY.x, positionXY.y, transform.position.z);
-        transform.position = pos;
     }
 
     private void CalculateAxis()
@@ -182,13 +163,8 @@ public class PlayerMovement : NetworkBehaviour
     // message receiver from "BulletTankDestroy" and "loadmap"
     public void ResetPosition()
     {
-        if (player == 1)
-        {
-            transform.position = new Vector3(-4, -12, 0);
-        }
-        else if (player == 2)
-        {
-            transform.position = new Vector3(4, -12, 0);
-        }
+        transform.position = GameManager.Instance.GetStartPosition((int)OwnerClientId);
+        
+        Debug.Log($"Player {OwnerClientId} position set to {transform.position}");
     }
 }

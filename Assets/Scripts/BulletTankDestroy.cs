@@ -2,7 +2,6 @@
 
 public class BulletTankDestroy : MonoBehaviour
 {
-
     public bool isFriendly;
     public AudioClip tankDestroy;
     public AudioClip ironHit;

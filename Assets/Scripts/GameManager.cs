@@ -93,6 +93,16 @@ public class GameManager : NetworkBehaviour
 
     public void StartGame()
     {
+        if (IsServer)
+        {
+            StartClientGameRpc();
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void StartClientGameRpc()
+    {
+        Debug.Log("Start Game");
         _mapLoader.StartGame(IsMultiplayer);
         _lobbyMenu.gameObject.SetActive(false);
     }

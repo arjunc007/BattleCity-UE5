@@ -29,8 +29,8 @@ public class MapLoad : MonoBehaviour
     public void StartGame(bool multiplayer)
     {
         _multiplayer = multiplayer;
-        LoadMap(level);
         _powerUp = Instantiate(powerUpPrefab).GetComponent<PowerUp>();
+        LoadMap(level);
     }
 
     private void LoadMap(bool won)

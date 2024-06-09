@@ -917,7 +917,8 @@ MonoBehaviour:
   generatedEnemyFolder: {fileID: 99033113}
   generatedBulletFolder: {fileID: 1503421058}
   spawnLocation: {fileID: 1938287973}
-  powerUp: {fileID: 314446465254358605, guid: e26873f0ae77ab64d902a81c58694f2d, type: 3}
+  powerUpPrefab: {fileID: 314446465254358605, guid: e26873f0ae77ab64d902a81c58694f2d,
+    type: 3}
   player1: {fileID: 848667649}
   player2: {fileID: 369978032}
   level: 1
@@ -1430,7 +1431,7 @@ Transform:
   m_GameObject: {fileID: 990213043}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: -12, z: 0}
+  m_LocalPosition: {x: -4, y: -12, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
