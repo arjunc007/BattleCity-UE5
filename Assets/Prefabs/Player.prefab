@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4253648319
+  GlobalObjectIdHash: 3705540075
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -325,6 +325,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0c28b11f99c5848aaa27476bc26268, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerAnim: {fileID: 6531804542583236858}
+  _controllers:
+  - {fileID: 9100000, guid: e97ee445a7b35084aaad9d822fa63100, type: 2}
+  - {fileID: 9100000, guid: 8ca48dab11dafd04a9fac562b14d0877, type: 2}
   MaxSpeed: 0.08
   player: 1
   notMovingSound: {fileID: 8300000, guid: d75b388b940f8524ca784c7d7515bdb6, type: 3}

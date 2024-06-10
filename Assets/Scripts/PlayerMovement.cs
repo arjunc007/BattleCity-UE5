@@ -1,10 +1,14 @@
 ﻿using Unity.Netcode;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem.Processors;
 using UnityEngine.UIElements;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    [SerializeField] private Animator _playerAnim;
+    [SerializeField] private AnimatorController[] _controllers;
+
     Vector2 Axis;
     public float MaxSpeed = 0.10f;
 
@@ -30,6 +34,11 @@ public class PlayerMovement : NetworkBehaviour
         if(IsServer)
         {
             ResetPosition();
+            _playerAnim.runtimeAnimatorController = _controllers[0];
+        }
+        else
+        {
+            _playerAnim.runtimeAnimatorController = _controllers[1];
         }
     }
 
