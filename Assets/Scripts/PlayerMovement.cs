@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private Animator _playerAnim;
     [SerializeField] private AnimatorController[] _controllers;
 
-    Vector2 Axis;
+    NetworkVariable<Vector2> Axis = new NetworkVariable<Vector2>();
     public float MaxSpeed = 0.10f;
 
     private Animator anim;
@@ -34,12 +34,9 @@ public class PlayerMovement : NetworkBehaviour
         if(IsServer)
         {
             ResetPosition();
-            _playerAnim.runtimeAnimatorController = _controllers[0];
         }
-        else
-        {
-            _playerAnim.runtimeAnimatorController = _controllers[1];
-        }
+        
+        _playerAnim.runtimeAnimatorController = _controllers[OwnerClientId];
     }
 
     void Start()
@@ -50,9 +47,10 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-        if (!IsLocalPlayer || !IsOwner || !GameManager.Instance.IsPlaying) return;
-
-        CalculateAxis();
+        if (IsLocalPlayer && IsOwner && !GameManager.Instance.IsPlaying)
+        {
+            CalculateAxis();
+        }
 
         anim.SetBool("isMoving", isMoving);
         anim.SetFloat("input_x", input_x);
@@ -78,17 +76,17 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (input.MoveValue == Vector2.zero)
         {
-            Axis = Vector2.zero;
+            Axis.Value = Vector2.zero;
         }
         if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
         {
-            if (input.MoveValue.x > 0) Axis = new Vector2(1, 0);
-            else if (input.MoveValue.x < 0) Axis = new Vector2(-1, 0);
+            if (input.MoveValue.x > 0) Axis.Value = new Vector2(1, 0);
+            else if (input.MoveValue.x < 0) Axis.Value = new Vector2(-1, 0);
         }
         else
         {
-            if (input.MoveValue.y > 0) Axis = new Vector2(0, 1);
-            else if (input.MoveValue.y < 0) Axis = new Vector2(0, -1);
+            if (input.MoveValue.y > 0) Axis.Value = new Vector2(0, 1);
+            else if (input.MoveValue.y < 0) Axis.Value = new Vector2(0, -1);
         }
         Debug.Log("Axis = " + Axis);
     }
@@ -96,33 +94,32 @@ public class PlayerMovement : NetworkBehaviour
     private void ChangeInputFromMultipleKeyPresses()
     {
         // Movement changing when pressing keys for both directions
-        if (Axis.x != 0 && Axis.y != 0)
+        if (Axis.Value.x != 0 && Axis.Value.y != 0)
         {
             if (input_x == 0)
             {
-                input_x = Axis.x;
+                input_x = Axis.Value.x;
                 input_y = 0;
             }
             if (input_y == 0)
             {
                 input_x = 0;
-                input_y = Axis.y;
+                input_y = Axis.Value.y;
             }
         }
         // If at least one key pressed
-        else if (Axis.x != 0 || Axis.y != 0)
+        else if (Axis.Value.x != 0 || Axis.Value.y != 0)
         {
-            input_x = Axis.x;
-            input_y = Axis.y;
+            input_x = Axis.Value.x;
+            input_y = Axis.Value.y;
         }
-
         Debug.Log("Input XY = " + input_x + ", " + input_y);
     }
 
     private void ActualyChangingCoordinatesAccordingToInput()
     {
         // Movement when pressing a key
-        if (Axis.x != 0 || Axis.y != 0)
+        if (Axis.Value.x != 0 || Axis.Value.y != 0)
         {
             // Move object
             isMoving = true;
@@ -168,7 +165,7 @@ public class PlayerMovement : NetworkBehaviour
 
     private bool IsSomethingPressed()
     {
-        return Axis != Vector2.zero;
+        return Axis.Value != Vector2.zero;
     }
 
 
