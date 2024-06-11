@@ -66,7 +66,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public void FixedUpdate()
     {
-        if (!IsLocalPlayer || !IsOwner || !GameManager.Instance.IsPlaying) return;
         // Do everything only then if not hit
         if (!anim.GetBool("hit"))
         {
