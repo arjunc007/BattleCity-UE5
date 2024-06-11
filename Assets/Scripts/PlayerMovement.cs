@@ -47,7 +47,12 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-        if (IsLocalPlayer && IsOwner && !GameManager.Instance.IsPlaying)
+        if(!GameManager.Instance.IsPlaying)
+        {
+            return; 
+        }
+
+        if (IsLocalPlayer && IsOwner)
         {
             CalculateAxis();
         }
