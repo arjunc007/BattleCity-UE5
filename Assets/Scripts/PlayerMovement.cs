@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private Animator _playerAnim;
     [SerializeField] private AnimatorController[] _controllers;
 
-    NetworkVariable<Vector2> Axis = new NetworkVariable<Vector2>();
+    NetworkVariable<Vector2> Axis = new NetworkVariable<Vector2>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public float MaxSpeed = 0.10f;
 
     private Animator anim;
