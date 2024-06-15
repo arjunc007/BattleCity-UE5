@@ -48,6 +48,7 @@ public class Shooting : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     private void LaunchBulletRpc()
     {
+        Debug.Log($"{OwnerClientId} Fire");
         float x = anim.GetFloat("input_x");
         float y = anim.GetFloat("input_y");
 

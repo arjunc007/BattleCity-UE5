@@ -92,7 +92,6 @@ public class PlayerMovement : NetworkBehaviour
             if (input.MoveValue.y > 0) Axis.Value = new Vector2(0, 1);
             else if (input.MoveValue.y < 0) Axis.Value = new Vector2(0, -1);
         }
-        Debug.Log("Axis = " + Axis);
     }
 
     private void ChangeInputFromMultipleKeyPresses()
@@ -117,7 +116,6 @@ public class PlayerMovement : NetworkBehaviour
             input_x = Axis.Value.x;
             input_y = Axis.Value.y;
         }
-        Debug.Log("Input XY = " + input_x + ", " + input_y);
     }
 
     private void ActualyChangingCoordinatesAccordingToInput()

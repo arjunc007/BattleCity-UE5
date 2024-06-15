@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -373,8 +372,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0c28b11f99c5848aaa27476bc26268, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Axis:
-    m_InternalValue: {x: 0, y: 0}
+  _playerAnim: {fileID: 0}
+  _controllers: []
   MaxSpeed: 0.08
   player: 2
   notMovingSound: {fileID: 0}
@@ -2077,6 +2076,7 @@ GameObject:
   - component: {fileID: 1938287975}
   - component: {fileID: 1938287974}
   - component: {fileID: 1938287976}
+  - component: {fileID: 1938287977}
   m_Layer: 0
   m_Name: SpawnLocation
   m_TagString: Untagged
@@ -2191,6 +2191,27 @@ MonoBehaviour:
   fastTank: {fileID: 1653503991}
   mediumTank: {fileID: 1983277329}
   strongTank: {fileID: 988777211}
+--- !u!114 &1938287977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938287972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 688897388
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &1983277329 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2724546699468731991, guid: fa8c3f944e443b74681eff93a279d908,
