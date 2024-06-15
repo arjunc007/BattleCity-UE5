@@ -7,6 +7,7 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private MapLoad _mapLoader;
     [SerializeField] private NetworkManager _netManager;
+    [SerializeField] private GameObject _spawnManager;
 
     [SerializeField] private Eagle _eagle;
     [SerializeField] private Transform[] _players;
@@ -18,6 +19,8 @@ public class GameManager : NetworkBehaviour
     [Header("UI")]
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private LobbyManager _lobbyMenu;
+
+    public Transform Eagle => _eagle.transform;
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
     public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
@@ -95,6 +98,8 @@ public class GameManager : NetworkBehaviour
     {
         if (IsServer)
         {
+            var spawner = Instantiate(_spawnManager);
+            spawner.GetComponent<NetworkObject>().Spawn();
             StartClientGameRpc();
         }
     }

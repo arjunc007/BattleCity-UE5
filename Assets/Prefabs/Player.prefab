@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3705540075
+  GlobalObjectIdHash: 4253648319
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -346,7 +346,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 3701078469901079055, guid: 090749271657fd64dbc4b72b2412379f, type: 3}
-  eagle: {fileID: 7016310602228699461, guid: 94dac3c1eeee2c14a9efe4a564c6b3cf, type: 3}
   isNPC: 0
   player: 1
   shotSound: {fileID: 8300000, guid: 421c9ae33653d9a4ba44ebdfc0d8cd2b, type: 3}
@@ -391,7 +390,7 @@ MonoBehaviour:
   SyncPositionZ: 0
   SyncRotAngleX: 0
   SyncRotAngleY: 0
-  SyncRotAngleZ: 1
+  SyncRotAngleZ: 0
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0

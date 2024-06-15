@@ -5,7 +5,6 @@ using UnityEngine;
 public class Shooting : NetworkBehaviour
 {
     public Transform bullet;
-    public Transform eagle;
     public bool isNPC;
     public int player;
     public AudioClip shotSound;
@@ -139,7 +138,7 @@ public class Shooting : NetworkBehaviour
         yield return new WaitForSeconds(time / 3 * 2);
 
         anim.SetBool("hit", false);
-        eagle.SendMessage("FinishGame");
+        GameManager.Instance.Eagle.SendMessage("FinishGame");
     }
 
     private bool canShoot()

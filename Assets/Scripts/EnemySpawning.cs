@@ -8,9 +8,7 @@ public class EnemySpawning : NetworkBehaviour
     private Animator anim;
     System.Random r;
 
-    public int next;
-    public Transform eagle;
-    public Transform generatedEnemyFolder;
+    public NetworkVariable<int> next = new();
     public Transform easyTank;
     public Transform fastTank;
     public Transform mediumTank;
@@ -44,7 +42,7 @@ public class EnemySpawning : NetworkBehaviour
     public void Reset()
     {
         transform.position = new Vector3(-12, 12, 0);
-        next = 0;
+        if(IsServer) next.Value = 0;
     }
 
     void Update()
@@ -53,11 +51,11 @@ public class EnemySpawning : NetworkBehaviour
         {
             return;
         }
-        int tankCount = generatedEnemyFolder.GetComponentsInChildren<Transform>().Length;
+        int tankCount = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>().Length;
         bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 
         // 4 tanks and 1 folder also counts, (if multiplayer, 6 tanks can be on screen)
-        if (next < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer))
+        if (next.Value < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer))
         {
             SpawnEnemyRpc();
         }
@@ -73,37 +71,41 @@ public class EnemySpawning : NetworkBehaviour
     // Called from animation event
     private void SpawnEnemy()
     {
+        if(!IsServer) { return; }
+
         anim.SetBool("spawn", false);
 
-        Transform t = null;
+        Enemy enemy = null;
 
-        if (tanks[next] == 1)
+        if (tanks[next.Value] == 1)
         {
-            t = Instantiate(easyTank, transform.position, easyTank.rotation , generatedEnemyFolder);
+            enemy = Instantiate(easyTank, transform.position, easyTank.rotation).GetComponent<Enemy>();
         }
-        else if (tanks[next] == 2)
+        else if (tanks[next.Value] == 2)
         {
-            t = Instantiate(fastTank, transform.position, fastTank.rotation, generatedEnemyFolder);
+            enemy = Instantiate(fastTank, transform.position, fastTank.rotation).GetComponent<Enemy>();
         }
-        else if (tanks[next] == 3)
+        else if (tanks[next.Value] == 3)
         {
-            t = Instantiate(mediumTank, transform.position, mediumTank.rotation, generatedEnemyFolder);
+            enemy = Instantiate(mediumTank, transform.position, mediumTank.rotation).GetComponent<Enemy>().GetComponent<Enemy>();
         }
-        else if (tanks[next] == 4)
+        else if (tanks[next.Value] == 4)
         {
-            t = Instantiate(strongTank, transform.position, strongTank.rotation, generatedEnemyFolder);
-            t.SendMessage("SetLives", 5);
+            enemy = Instantiate(strongTank, transform.position, strongTank.rotation).GetComponent<Enemy>();
+            enemy.SetLives(5);
         }
 
         PushPosition();
 
         // every four enemies, one get bonus 
-        if ((next + 1) % 4 == 0)
+        if ((next.Value + 1) % 4 == 0)
         {
-            t.SendMessage("SetBonus", r.Next(50) % 5 + 1);
+            enemy.SetBonus(r.Next(50) % 5 + 1);
         }
 
-        next++;
+        enemy.GetComponent<NetworkObject>().Spawn();
+
+        next.Value++;
     }
 
     private void PushPosition()
