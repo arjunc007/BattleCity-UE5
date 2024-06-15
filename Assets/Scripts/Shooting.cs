@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using Unity.Netcode;
+using System.Collections;
 using UnityEngine;
 
-public class Shooting : MonoBehaviour
+public class Shooting : NetworkBehaviour
 {
     public Transform bullet;
     public Transform eagle;
@@ -10,7 +11,6 @@ public class Shooting : MonoBehaviour
     public AudioClip shotSound;
     public AudioClip gameOver;
 
-    private Transform tank;
     private Animator anim;
     InputManager input;
     private int alreadyShot = 0;
@@ -19,30 +19,34 @@ public class Shooting : MonoBehaviour
     void Start()
     {
         input = InputManager.Instance;
-        tank = gameObject.GetComponent<Transform>();
         anim = gameObject.GetComponent<Animator>();
     }
 
     void Update()
     {
+        if(!IsOwner)
+        {
+            return; 
+        }
+
         if (canShoot() && !anim.GetBool("hit") &&
-            (((!isNPC && player == 1 && input.Fire) /*|| 
-            (!isNPC && player == 2 && Input.GetKeyDown(KeyCode.L))*/)
+            (((!isNPC && input.Fire))
             || isNPC))
         {
             alreadyShot++;
             if (isNPC) StartCoroutine(DelayShootingFor(0.2f));
-            else LaunchBullet();
+            else LaunchBulletRpc();
         }
     }
 
     private IEnumerator DelayShootingFor(float time)
     {
         yield return new WaitForSeconds(time);
-        if (!anim.GetBool("hit")) LaunchBullet();
+        if (!anim.GetBool("hit")) LaunchBulletRpc();
     }
 
-    private void LaunchBullet()
+    [Rpc(SendTo.ClientsAndHost)]
+    private void LaunchBulletRpc()
     {
         float x = anim.GetFloat("input_x");
         float y = anim.GetFloat("input_y");
@@ -55,9 +59,9 @@ public class Shooting : MonoBehaviour
         if (x == -1 && y == 0) r = 0;
 
         // Creates new bullet
-        Vector3 pos = tank.position + new Vector3(x, y, 0);
+        Vector3 pos = transform.position + new Vector3(x, y, 0);
 
-        Transform newBullet = Instantiate(bullet, pos, tank.rotation, GameManager.Instance.BulletHolder);
+        Transform newBullet = Instantiate(bullet, pos, transform.rotation, GameManager.Instance.BulletHolder);
         newBullet.eulerAngles += new Vector3(0, 0, r);
 
         // Passes variables x and y
@@ -65,7 +69,7 @@ public class Shooting : MonoBehaviour
         a.SetFloat("input_x", x);
         a.SetFloat("input_y", y);
 
-        a.gameObject.SendMessage("SetShooterTank", tank);
+        a.gameObject.SendMessage("SetShooterTank", transform);
 
         // plays a sound
 
@@ -104,11 +108,11 @@ public class Shooting : MonoBehaviour
         }
         else if (!isNPC)
         {
-            tank.position = new Vector3(120, 20, 0);
-            tank.SendMessage("SetLevel", 1);
+            transform.position = new Vector3(120, 20, 0);
+            transform.SendMessage("SetLevel", 1);
 
             ArgsPointer<int> pointer = new ArgsPointer<int>();
-            tank.SendMessage("GetLives", pointer);
+            transform.SendMessage("GetLives", pointer);
 
             if (pointer.Args[0] <= 0)
             {
@@ -118,8 +122,8 @@ public class Shooting : MonoBehaviour
             {
                 this.DoAfter(1.5f, () =>
                 {
-                    tank.SendMessage("ResetPosition");
-                    tank.GetComponent<Animator>().SetBool("hit", false);
+                    transform.SendMessage("ResetPosition");
+                    transform.GetComponent<Animator>().SetBool("hit", false);
                     alreadyShot = 0;
                     SendMessage("SetShield", 6);
                 });
