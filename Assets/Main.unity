@@ -874,7 +874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mapLoader: {fileID: 727107219}
   _netManager: {fileID: 1674869196}
-  _spawnManager: {fileID: 3451445476951008216, guid: 18dfc10a737d6c54ea708450559ec55d,
+  _spawnManager: {fileID: 7919124682210675826, guid: 18dfc10a737d6c54ea708450559ec55d,
     type: 3}
   _eagle: {fileID: 1753172601}
   _players:

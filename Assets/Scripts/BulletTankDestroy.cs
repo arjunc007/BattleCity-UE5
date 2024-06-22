@@ -25,7 +25,7 @@ public class BulletTankDestroy : MonoBehaviour
         }
 
         // Destroy tank and bullet
-        if ((tank.name.Contains("Tank") && isFriendly || tank.name.Contains("Player") && !isFriendly)
+        if (((tank.name.Contains("Tank") && isFriendly) || (tank.name.Contains("Player") && !isFriendly))
             && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
             bulletAnim.SetBool("hit", true);
@@ -43,6 +43,7 @@ public class BulletTankDestroy : MonoBehaviour
                 else if (tankAnim.GetInteger("lives") <= 1)
                 {
                     tankAnim.SetBool("hit", true);
+                    GameManager.Instance.EnemySpawner.RemoveEnemy(collider.GetComponent<Enemy>());
                     AudioManager.Instance.PlayOneShot(tankDestroy);
                 }
                 else

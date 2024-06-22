@@ -14,22 +14,23 @@ public class EnemySpawning : NetworkBehaviour
     public Transform mediumTank;
     public Transform strongTank;
 
+    private List<Enemy> _enemies = new();
+
+    private void Awake()
+    {
+        tanks = new NetworkList<int>();
+    }
 
     public override void OnNetworkSpawn()
     {
-        if(!IsServer) { return; }
+        if (!IsServer) { return; }
 
         r = new System.Random();
 
         for (int i = 0; i < 20; i++)
         {
-            tanks.Add(r.Next(50) % 4 + 1);
+            tanks.Add((r.Next(50) % 4) + 1);
         }
-    }
-
-    private void Awake()
-    {
-        tanks = new NetworkList<int>();
     }
 
     void Start()
@@ -42,7 +43,19 @@ public class EnemySpawning : NetworkBehaviour
     public void Reset()
     {
         transform.position = new Vector3(-12, 12, 0);
-        if(IsServer) next.Value = 0;
+        if (IsServer)
+        {
+            for (int i = 0; i < _enemies.Count; i++)
+            {
+                Destroy(_enemies[i]);
+            }
+            next.Value = 0;
+        }
+    }
+
+    public void RemoveEnemy(Enemy enemy)
+    {
+        _enemies.Remove(enemy);
     }
 
     void Update()
@@ -51,11 +64,11 @@ public class EnemySpawning : NetworkBehaviour
         {
             return;
         }
-        int tankCount = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>().Length;
+
         bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 
         // 4 tanks and 1 folder also counts, (if multiplayer, 6 tanks can be on screen)
-        if (next.Value < 20 && (tankCount < 5 && !isMultiPlayer || tankCount < 7 && isMultiPlayer))
+        if (next.Value < 20 && ((_enemies.Count < 5 && !isMultiPlayer) || (_enemies.Count < 7 && isMultiPlayer)))
         {
             SpawnEnemyRpc();
         }
@@ -71,27 +84,31 @@ public class EnemySpawning : NetworkBehaviour
     // Called from animation event
     private void SpawnEnemy()
     {
-        if(!IsServer) { return; }
-
         anim.SetBool("spawn", false);
+
+        if (!IsServer) { return; }
 
         Enemy enemy = null;
 
         if (tanks[next.Value] == 1)
         {
             enemy = Instantiate(easyTank, transform.position, easyTank.rotation).GetComponent<Enemy>();
+            enemy.GetComponent<NetworkObject>().Spawn();
         }
         else if (tanks[next.Value] == 2)
         {
             enemy = Instantiate(fastTank, transform.position, fastTank.rotation).GetComponent<Enemy>();
+            enemy.GetComponent<NetworkObject>().Spawn();
         }
         else if (tanks[next.Value] == 3)
         {
             enemy = Instantiate(mediumTank, transform.position, mediumTank.rotation).GetComponent<Enemy>().GetComponent<Enemy>();
+            enemy.GetComponent<NetworkObject>().Spawn();
         }
         else if (tanks[next.Value] == 4)
         {
             enemy = Instantiate(strongTank, transform.position, strongTank.rotation).GetComponent<Enemy>();
+            enemy.GetComponent<NetworkObject>().Spawn();
             enemy.SetLives(5);
         }
 
@@ -100,18 +117,20 @@ public class EnemySpawning : NetworkBehaviour
         // every four enemies, one get bonus 
         if ((next.Value + 1) % 4 == 0)
         {
-            enemy.SetBonus(r.Next(50) % 5 + 1);
+            enemy.SetBonus((r.Next(50) % 5) + 1);
         }
 
-        enemy.GetComponent<NetworkObject>().Spawn();
-
+        _enemies.Add(enemy);
         next.Value++;
     }
 
     private void PushPosition()
     {
         transform.position += new Vector3(12, 0, 0);
-        if (transform.position.x > 12) transform.position = new Vector3(-12, 12, 0);
+        if (transform.position.x > 12)
+        {
+            transform.position = new Vector3(-12, 12, 0);
+        }
     }
 
     public override void OnDestroy()
