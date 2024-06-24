@@ -1,22 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
-public class BulletWallDestroy : MonoBehaviour {
-
-    private Transform bullet;
+public class BulletWallDestroy : MonoBehaviour
+{
     private Transform wall;
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
         Animator bulletAnim = gameObject.GetComponent<Animator>();
-        bullet = gameObject.GetComponent<Transform>();
         wall = collider.GetComponent<Transform>();
 
         if ((wall.name.Contains("Wall") || wall.name.Contains("Iron")) && !bulletAnim.GetBool("hit"))
         {
             bulletAnim.SetBool("hit", true);
-            destroyWallsAccordingToCoordinates(Mathf.Round(bullet.position.x), Mathf.Round(bullet.position.y));
+            destroyWallsAccordingToCoordinates(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
             PlaySound(bulletAnim);
         }
     }
@@ -70,7 +66,7 @@ public class BulletWallDestroy : MonoBehaviour {
     {
         float input_x = bulletAnim.GetFloat("input_x");
         float input_y = bulletAnim.GetFloat("input_y");
-        
+
         obj.NotNull((t) =>
         {
             Animator wallAnim = t.GetComponent<Animator>();
@@ -91,7 +87,7 @@ public class BulletWallDestroy : MonoBehaviour {
                 }
                 else if (curr.IsIn(4, 5, 6))
                 {
-                    wallAnim.SetFloat("left_numpad", curr + input_y * 3);
+                    wallAnim.SetFloat("left_numpad", curr + (input_y * 3));
                 }
             }
             // Horizontal shot

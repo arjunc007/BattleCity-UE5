@@ -1,4 +1,8 @@
+using System.Linq;
+using System.Net;
+using TMPro;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 public class GameManager : NetworkBehaviour
@@ -19,6 +23,8 @@ public class GameManager : NetworkBehaviour
     [Header("UI")]
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private LobbyManager _lobbyMenu;
+    [SerializeField] private TextMeshProUGUI _myIP;
+    [SerializeField] private TMP_InputField _targetIP;
 
     public EnemySpawning EnemySpawner => _spawnManager;
     public Transform Eagle => _eagle.transform;
@@ -66,10 +72,15 @@ public class GameManager : NetworkBehaviour
         QualitySettings.vSyncCount = 1;
         QualitySettings.SetQualityLevel(2);
         _mainMenu.SetActive(true);
+        _myIP.text = GetLocalIPv4();
     }
 
     public void EnterLobby(bool isHost)
     {
+
+        UnityTransport transport = _netManager.NetworkConfig.NetworkTransport as UnityTransport;
+        transport.ConnectionData.Address = _targetIP.text;
+
         if (isHost)
         {
             _netManager.StartHost();
@@ -128,5 +139,12 @@ public class GameManager : NetworkBehaviour
         //player2.SendMessage("SetLives", 3);
         _eagle.SetDestroyed(false);
         _mapLoader.LoadMap(1);
+    }
+
+    private string GetLocalIPv4()
+    {
+        return Dns.GetHostEntry(Dns.GetHostName()).AddressList.First(
+        f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+        .ToString();
     }
 }

@@ -1,13 +1,10 @@
 ﻿using Unity.Netcode;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.InputSystem.Processors;
-using UnityEngine.UIElements;
 
 public class PlayerMovement : NetworkBehaviour
 {
     [SerializeField] private Animator _playerAnim;
-    [SerializeField] private AnimatorController[] _controllers;
+    [SerializeField] private RuntimeAnimatorController[] _controllers;
 
     NetworkVariable<Vector2> Axis = new NetworkVariable<Vector2>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public float MaxSpeed = 0.10f;
@@ -31,11 +28,11 @@ public class PlayerMovement : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         Debug.Log($"Player {OwnerClientId} Spawned");
-        if(IsServer)
+        if (IsServer)
         {
             ResetPosition();
         }
-        
+
         _playerAnim.runtimeAnimatorController = _controllers[OwnerClientId];
     }
 
@@ -47,9 +44,9 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
-        if(!GameManager.Instance.IsPlaying)
+        if (!GameManager.Instance.IsPlaying)
         {
-            return; 
+            return;
         }
 
         if (IsLocalPlayer && IsOwner)
@@ -61,7 +58,10 @@ public class PlayerMovement : NetworkBehaviour
         anim.SetFloat("input_x", input_x);
         anim.SetFloat("input_y", input_y);
 
-        if (anim.GetBool("hit")) anim.SetBool("isMoving", false);
+        if (anim.GetBool("hit"))
+        {
+            anim.SetBool("isMoving", false);
+        }
     }
 
     public void FixedUpdate()
@@ -84,13 +84,25 @@ public class PlayerMovement : NetworkBehaviour
         }
         if (Mathf.Abs(input.MoveValue.x) > Mathf.Abs(input.MoveValue.y))
         {
-            if (input.MoveValue.x > 0) Axis.Value = new Vector2(1, 0);
-            else if (input.MoveValue.x < 0) Axis.Value = new Vector2(-1, 0);
+            if (input.MoveValue.x > 0)
+            {
+                Axis.Value = new Vector2(1, 0);
+            }
+            else if (input.MoveValue.x < 0)
+            {
+                Axis.Value = new Vector2(-1, 0);
+            }
         }
         else
         {
-            if (input.MoveValue.y > 0) Axis.Value = new Vector2(0, 1);
-            else if (input.MoveValue.y < 0) Axis.Value = new Vector2(0, -1);
+            if (input.MoveValue.y > 0)
+            {
+                Axis.Value = new Vector2(0, 1);
+            }
+            else if (input.MoveValue.y < 0)
+            {
+                Axis.Value = new Vector2(0, -1);
+            }
         }
     }
 
@@ -175,7 +187,7 @@ public class PlayerMovement : NetworkBehaviour
     public void ResetPosition()
     {
         transform.position = GameManager.Instance.GetStartPosition((int)OwnerClientId);
-        
+
         Debug.Log($"Player {OwnerClientId} position set to {transform.position}");
     }
 }
