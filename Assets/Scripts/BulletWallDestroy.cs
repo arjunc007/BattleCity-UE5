@@ -2,40 +2,45 @@
 
 public class BulletWallDestroy : MonoBehaviour
 {
-    private Transform wall;
+    private Animator _animator;
+    private Transform _wall;
+
+    private void Start()
+    {
+        _animator = gameObject.GetComponent<Animator>();
+    }
+
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        Animator bulletAnim = gameObject.GetComponent<Animator>();
-        wall = collider.GetComponent<Transform>();
+        _wall = collider.GetComponent<Transform>();
 
-        if ((wall.name.Contains("Wall") || wall.name.Contains("Iron")) && !bulletAnim.GetBool("hit"))
+        if ((_wall.name.Contains("Wall") || _wall.name.Contains("Iron")) && !_animator.GetBool("hit"))
         {
-            bulletAnim.SetBool("hit", true);
-            destroyWallsAccordingToCoordinates(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
-            PlaySound(bulletAnim);
+            _animator.SetBool("hit", true);
+            DestroyWallsAccordingToCoordinates(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y));
+            PlaySound();
         }
     }
 
-    private void PlaySound(Animator bulletAnim)
+    private void PlaySound()
     {
-        if (wall.name.Contains("Iron"))
+        if (_wall.name.Contains("Iron"))
         {
             gameObject.SendMessage("PlayIronHitSound");
         }
-        if (wall.name.Contains("Wall"))
+        if (_wall.name.Contains("Wall"))
         {
             gameObject.SendMessage("PlayBrickHitSound");
         }
     }
 
-    private void destroyWallsAccordingToCoordinates(float x, float y)
+    private void DestroyWallsAccordingToCoordinates(float x, float y)
     {
         Transform[] ts = GameManager.Instance.WallsHolder.GetComponentsInChildren<Transform>();
 
-        Animator bulletAnim = gameObject.GetComponent<Animator>();
-        float input_x = bulletAnim.GetFloat("input_x");
-        float input_y = bulletAnim.GetFloat("input_y");
+        float input_x = _animator.GetFloat("input_x");
+        float input_y = _animator.GetFloat("input_y");
 
         // Horizontal shot
         if (input_y == 0)
@@ -45,8 +50,8 @@ public class BulletWallDestroy : MonoBehaviour
                 x -= 1;
             }
 
-            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y), bulletAnim);
-            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y - 1), bulletAnim);
+            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y), _animator);
+            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y - 1), _animator);
         }
 
         // Vertical shot
@@ -57,8 +62,8 @@ public class BulletWallDestroy : MonoBehaviour
                 y -= 1;
             }
 
-            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y), bulletAnim);
-            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x - 1, y), bulletAnim);
+            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x, y), _animator);
+            PartiallyDestroy(ts.GetByNameAndCoords("Wall", x - 1, y), _animator);
         }
     }
 
@@ -69,13 +74,15 @@ public class BulletWallDestroy : MonoBehaviour
 
         obj.NotNull((t) =>
         {
-            Animator wallAnim = t.GetComponent<Animator>();
+            Wall wall = t.GetComponent<Wall>();
 
-            float curr = wallAnim.GetFloat("left_numpad");
+            float curr = wall.CurrentState;
+            Debug.Log("Partially Destroy wall " + curr);
 
             // The tyniest piece of wall left
             if (curr.IsIn(1, 3, 7, 9))
             {
+                Debug.Log("Destroy wall");
                 Destroy(t.gameObject);
             }
             // Vertical shot
@@ -83,11 +90,12 @@ public class BulletWallDestroy : MonoBehaviour
             {
                 if (curr.IsIn(2, 8))
                 {
+                    Debug.Log("Destroy wall");
                     Destroy(t.gameObject);
                 }
                 else if (curr.IsIn(4, 5, 6))
                 {
-                    wallAnim.SetFloat("left_numpad", curr + (input_y * 3));
+                    wall.UpdateWall(curr + (input_y * 3));
                 }
             }
             // Horizontal shot
@@ -95,11 +103,12 @@ public class BulletWallDestroy : MonoBehaviour
             {
                 if (curr.IsIn(4, 6))
                 {
+                    Debug.Log("Destroy wall");
                     Destroy(t.gameObject);
                 }
                 else if (curr.IsIn(2, 5, 8))
                 {
-                    wallAnim.SetFloat("left_numpad", curr + input_x);
+                    wall.UpdateWall(curr + input_x);
                 }
             }
         });
