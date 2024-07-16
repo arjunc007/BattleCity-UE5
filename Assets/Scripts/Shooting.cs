@@ -25,7 +25,7 @@ public class Shooting : NetworkBehaviour
 
     void Update()
     {
-        if (!IsOwner)
+        if (!IsOwner || !GameManager.Instance.IsPlaying)
         {
             return;
         }

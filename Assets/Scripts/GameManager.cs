@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using TMPro;
+using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
@@ -31,6 +32,8 @@ public class GameManager : NetworkBehaviour
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
     public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
+
+    private bool _connected = false;
 
     public override void OnNetworkSpawn()
     {
@@ -75,13 +78,18 @@ public class GameManager : NetworkBehaviour
         _myIP.text = GetLocalIPv4();
     }
 
-    public void EnterLobby(bool isHost)
+    public void EnterLobby(bool asHost)
     {
+        if (_connected)
+        {
+            Debug.Log("Already connected. Failed to create lobby.");
+            return;
+        }
 
         UnityTransport transport = _netManager.NetworkConfig.NetworkTransport as UnityTransport;
         transport.ConnectionData.Address = _targetIP.text;
 
-        if (isHost)
+        if(asHost)
         {
             _netManager.StartHost();
             _lobbyMenu.Initialise(true);
@@ -91,12 +99,14 @@ public class GameManager : NetworkBehaviour
             if (!NetworkManager.Singleton.StartClient())
             {
                 Debug.LogError("Failed to start client.");
+                _connected = false;
                 return;
             }
 
             _lobbyMenu.Initialise(false);
         }
         _lobbyMenu.gameObject.SetActive(true);
+        _connected = true;
         IsMultiplayer = true;
     }
 
@@ -146,5 +156,21 @@ public class GameManager : NetworkBehaviour
         return Dns.GetHostEntry(Dns.GetHostName()).AddressList.First(
         f => f.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
         .ToString();
+    }
+    public void ExitLobby()
+    {
+        _netManager.Shutdown();
+        StartCoroutine(WaitForDisconnect());
+        _lobbyMenu.CleanUp();
+    }
+
+    private IEnumerator WaitForDisconnect()
+    {
+        while (_netManager.ShutdownInProgress)
+        {
+            yield return null;
+        }
+
+        _connected = false;
     }
 }

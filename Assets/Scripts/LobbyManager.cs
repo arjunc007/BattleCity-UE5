@@ -27,9 +27,7 @@ public class LobbyManager : MonoBehaviour
         {
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = true;
-            P1ReadyButton.onClick.AddListener(() => { 
-                GameManager.Instance.ReadyPlayerRpc(NetworkManager.Singleton.LocalClientId);
-            });
+            P1ReadyButton.onClick.AddListener(AddPlayer);
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(false);
             P2ReadyButton.interactable = false;
@@ -41,9 +39,7 @@ public class LobbyManager : MonoBehaviour
         {
             P1Image.gameObject.SetActive(true);
             P1ReadyButton.interactable = false;
-            P2ReadyButton.onClick.AddListener(() => {
-                GameManager.Instance.ReadyPlayerRpc(NetworkManager.Singleton.LocalClientId);
-            });
+            P2ReadyButton.onClick.AddListener(AddPlayer);
             P1ReadyButtonText.text = UNREADY;
             P2Image.gameObject.SetActive(true);
             P2ReadyButton.interactable = true;
@@ -80,8 +76,20 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    public void CleanUp()
     {
-        
+        P1Image.gameObject.SetActive(false);
+        P1ReadyButton.onClick.RemoveListener(AddPlayer);
+        P2ReadyButton.onClick.RemoveListener(AddPlayer);
+        P2Image.gameObject.SetActive(false);
+        P2ReadyButton.interactable = false;
+        P2ReadyButton.gameObject.SetActive(false);
+        _p1Ready = false;
+        _p2Ready = false;
+    }
+
+    private void AddPlayer()
+    {
+        GameManager.Instance.ReadyPlayerRpc(NetworkManager.Singleton.LocalClientId);
     }
 }

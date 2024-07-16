@@ -30,6 +30,11 @@ public class Enemy : NetworkBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.IsPlaying)
+        {
+            return;
+        }
+
         anim.SetFloat("input_x", input_x.Value);
         anim.SetFloat("input_y", input_y.Value);
         anim.SetInteger("bonus", bonus.Value);
@@ -40,6 +45,11 @@ public class Enemy : NetworkBehaviour
 
     public void FixedUpdate()
     {
+        if (!GameManager.Instance.IsPlaying)
+        {
+            return;
+        }
+
         if (!anim.GetBool("hit"))
         {
             // AI
