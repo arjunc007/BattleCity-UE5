@@ -1,7 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using TMPro;
-using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private Eagle _eagle;
     [SerializeField] private Transform[] _players;
     [SerializeField] private Transform[] _spawnPositions;
+    [SerializeField] private Transform _powerupPrefab;
 
     public bool IsMultiplayer = false;
     public bool IsPlaying = false;
@@ -28,11 +30,13 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private TMP_InputField _targetIP;
 
     public EnemySpawning EnemySpawner => _spawnManager;
+    public List<Enemy> Enemies => _spawnManager.Enemies;
     public Transform Eagle => _eagle.transform;
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
     public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
 
+    public PowerUp PowerUp { get; private set; }
     private bool _connected = false;
 
     public override void OnNetworkSpawn()
@@ -89,7 +93,7 @@ public class GameManager : NetworkBehaviour
         UnityTransport transport = _netManager.NetworkConfig.NetworkTransport as UnityTransport;
         transport.ConnectionData.Address = _targetIP.text;
 
-        if(asHost)
+        if (asHost)
         {
             _netManager.StartHost();
             _lobbyMenu.Initialise(true);
@@ -130,6 +134,7 @@ public class GameManager : NetworkBehaviour
     private void StartClientGameRpc()
     {
         Debug.Log("Start Game");
+        PowerUp = Instantiate(_powerupPrefab).GetComponent<PowerUp>();
         _mapLoader.StartGame(IsMultiplayer);
         _lobbyMenu.gameObject.SetActive(false);
         IsPlaying = true;
@@ -142,7 +147,6 @@ public class GameManager : NetworkBehaviour
 
     public void FinishGame()
     {
-
         _players[0].SendMessage("SetLevel", 1);
         _players[0].SendMessage("SetLives", 3);
         //player2.SendMessage("SetLevel", 1);

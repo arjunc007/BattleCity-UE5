@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
+using UnityEngine;
 
-public class PowerUp : MonoBehaviour {
+public class PowerUp : MonoBehaviour
+{
 
     public AudioClip powerUpTaken;
     public AudioClip powerUpShowUp;
@@ -22,16 +22,11 @@ public class PowerUp : MonoBehaviour {
     {
         gameObject.GetComponent<Animator>().SetFloat("bonus", bonus);
 
-        Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
-
         if (freezeTime > 0)
         {
-            foreach (var t in ts)
+            foreach (var enemy in GameManager.Instance.Enemies)
             {
-                if (!t.gameObject.name.Contains("Generated"))
-                {
-                    t.GetComponent<Animator>().SetBool("isMoving", false);
-                }
+                enemy.SetMovingAnim(false);
             }
         }
     }
@@ -96,19 +91,15 @@ public class PowerUp : MonoBehaviour {
         }
         if (freezeTime <= 0)
         {
-            Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
-            foreach (var t in ts)
+            foreach (var enemy in GameManager.Instance.Enemies)
             {
-                if (!t.gameObject.name.Contains("Generated"))
-                {
-                    t.GetComponent<Animator>().SetBool("isMoving", true);
-                }
+                enemy.SetMovingAnim(true);
             }
         }
     }
 
     private float GetRanCoord()
     {
-        return (r.Next(-120, 120) / 10f);
+        return r.Next(-120, 120) / 10f;
     }
 }

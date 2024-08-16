@@ -5,7 +5,6 @@ public class BulletTankDestroy : MonoBehaviour
     public bool isFriendly;
     public AudioClip tankDestroy;
     public AudioClip ironHit;
-    public Transform powerUp;
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
@@ -14,12 +13,11 @@ public class BulletTankDestroy : MonoBehaviour
         Transform tank = collider.GetComponent<Transform>();
         Animator tankAnim = collider.GetComponent<Animator>();
 
-
         // Show power up if was red
         if (tank.name.Contains("Tank") && isFriendly
             && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
-            powerUp.SendMessage("ShowPowerUp", tankAnim.GetInteger("bonus"));
+            GameManager.Instance.PowerUp.ShowPowerUp(tankAnim.GetInteger("bonus"));
             tank.SendMessage("SetBonus", 0, 0);
             tankAnim.SetInteger("bonus", 0);
         }

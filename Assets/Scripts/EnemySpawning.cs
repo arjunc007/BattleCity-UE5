@@ -16,6 +16,8 @@ public class EnemySpawning : NetworkBehaviour
 
     private List<Enemy> _enemies = new();
 
+    public List<Enemy> Enemies => _enemies;
+
     private void Awake()
     {
         tanks = new NetworkList<int>();
@@ -43,6 +45,7 @@ public class EnemySpawning : NetworkBehaviour
     public void Reset()
     {
         transform.position = new Vector3(-12, 12, 0);
+
         if (IsServer)
         {
             for (int i = 0; i < _enemies.Count; i++)

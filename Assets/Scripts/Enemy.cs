@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
 using Unity.Netcode;
+using UnityEngine;
 
 public class Enemy : NetworkBehaviour
 {
@@ -9,7 +8,7 @@ public class Enemy : NetworkBehaviour
     public NetworkVariable<int> bonus = new NetworkVariable<int>();
     private NetworkVariable<int> lives = new NetworkVariable<int>(1);
 
-    private Animator anim;
+    private Animator _anim;
 
     private NetworkVariable<float> input_x = new NetworkVariable<float>(0);
     private NetworkVariable<float> input_y = new NetworkVariable<float>(-1);
@@ -25,7 +24,7 @@ public class Enemy : NetworkBehaviour
 
     void Start()
     {
-        anim = gameObject.GetComponent<Animator>();
+        _anim = gameObject.GetComponent<Animator>();
     }
 
     void Update()
@@ -35,12 +34,12 @@ public class Enemy : NetworkBehaviour
             return;
         }
 
-        anim.SetFloat("input_x", input_x.Value);
-        anim.SetFloat("input_y", input_y.Value);
-        anim.SetInteger("bonus", bonus.Value);
-        anim.SetInteger("lives", lives.Value);
+        _anim.SetFloat("input_x", input_x.Value);
+        _anim.SetFloat("input_y", input_y.Value);
+        _anim.SetInteger("bonus", bonus.Value);
+        _anim.SetInteger("lives", lives.Value);
 
-        anim.SetBool("isMoving", isMoving);
+        _anim.SetBool("isMoving", isMoving);
     }
 
     public void FixedUpdate()
@@ -50,15 +49,15 @@ public class Enemy : NetworkBehaviour
             return;
         }
 
-        if (!anim.GetBool("hit"))
+        if (!_anim.GetBool("hit"))
         {
             // AI
-            
+
             if (!changingPos)
             {
                 StartCoroutine(ChangePostition());
             }
-            
+
             //Movement
             if (input_x.Value != 0 || input_y.Value != 0)
             {
@@ -81,29 +80,49 @@ public class Enemy : NetworkBehaviour
                 isMoving = false;
             }
 
-            anim.SetFloat("input_x", input_x.Value);
-            anim.SetFloat("input_y", input_y.Value);
+            _anim.SetFloat("input_x", input_x.Value);
+            _anim.SetFloat("input_y", input_y.Value);
 
         }
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (transform.position.y < -11.5f && input_y.Value < 0 || transform.position.y > 11.5f && input_y.Value > 0)
+        if (IsServer)
         {
-            input_x.Value = r.Next(50) % 3 - 1;
-            if (input_x.Value == 0) input_y.Value = -input_y.Value;
-            else input_y.Value = 0;
-        }
-        else if (transform.position.x < -11.5f && input_x.Value < 0 || transform.position.x > 11.5f && input_x.Value > 0)
-        {
-            input_y.Value = r.Next(50) % 3 - 1;
-            if (input_y.Value == 0) input_x.Value = -input_x.Value;
-            else input_x.Value = 0;
+            if ((transform.position.y < -11.5f && input_y.Value < 0) || (transform.position.y > 11.5f && input_y.Value > 0))
+            {
+                input_x.Value = (r.Next(50) % 3) - 1;
+                if (input_x.Value == 0)
+                {
+                    input_y.Value = -input_y.Value;
+                }
+                else
+                {
+                    input_y.Value = 0;
+                }
+            }
+            else if ((transform.position.x < -11.5f && input_x.Value < 0) || (transform.position.x > 11.5f && input_x.Value > 0))
+            {
+                input_y.Value = (r.Next(50) % 3) - 1;
+                if (input_y.Value == 0)
+                {
+                    input_x.Value = -input_x.Value;
+                }
+                else
+                {
+                    input_x.Value = 0;
+                }
+            }
         }
 
-        anim.SetFloat("input_x", input_x.Value);
-        anim.SetFloat("input_y", input_y.Value);
+        _anim.SetFloat("input_x", input_x.Value);
+        _anim.SetFloat("input_y", input_y.Value);
+    }
+
+    public void SetMovingAnim(bool value)
+    {
+        _anim.SetBool("isMoving", value);
     }
 
     private IEnumerator ChangePostition()
@@ -119,10 +138,13 @@ public class Enemy : NetworkBehaviour
 
     private void SetRandomValues()
     {
-        if (!IsServer) return;
+        if (!IsServer)
+        {
+            return;
+        }
 
-        input_x.Value = r.Next(50) % 3 - 1;
-        input_y.Value = r.Next(50) % 3 - 1;
+        input_x.Value = (r.Next(50) % 3) - 1;
+        input_y.Value = (r.Next(50) % 3) - 1;
 
         if ((input_x.Value == 0 && input_y.Value == 0) || (input_y.Value != 0 && input_x.Value != 0))
         {
@@ -141,7 +163,7 @@ public class Enemy : NetworkBehaviour
     //Message receiver from "BulletTankDestroy"
     public void SetLives(int lives)
     {
-        if(IsServer)
+        if (IsServer)
         {
             this.lives.Value = lives;
         }

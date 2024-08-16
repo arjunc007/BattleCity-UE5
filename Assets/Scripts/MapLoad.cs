@@ -2,15 +2,10 @@
 
 public class MapLoad : MonoBehaviour
 {
-
     public Transform generatedWallFolder;
-    public Transform generatedEnemyFolder;
     public Transform generatedBulletFolder;
     public Transform spawnLocation;
     public Transform powerUpPrefab;
-
-    public Transform player1;
-    public Transform player2;
 
     public int level;
 
@@ -22,14 +17,12 @@ public class MapLoad : MonoBehaviour
 
     public AudioClip levelStarting;
 
-    private PowerUp _powerUp;
     private bool _multiplayer = false;
     private int currentLevel;
 
     public void StartGame(bool multiplayer)
     {
         _multiplayer = multiplayer;
-        _powerUp = Instantiate(powerUpPrefab).GetComponent<PowerUp>();
         LoadMap(level);
     }
 
@@ -48,7 +41,6 @@ public class MapLoad : MonoBehaviour
 
         // Reset data
         DeleteChilds(generatedWallFolder);
-        DeleteChilds(generatedEnemyFolder);
         DeleteChilds(generatedBulletFolder);
 
         //player1.SendMessage("ResetPosition");
@@ -72,14 +64,14 @@ public class MapLoad : MonoBehaviour
 
 
         // Enemy spawning reset
-        spawnLocation.SendMessage("Reset");
+        GameManager.Instance.EnemySpawner.Reset();
 
         // Read map file
         string[] m = System.IO.File.ReadAllLines(@"Assets/Maps/map" + currentLevel + ".txt");
         GenerateObjects(m);
 
         // powerUp reset
-        _powerUp.Reset();
+        GameManager.Instance.PowerUp.Reset();
 
         // play a sound
         AudioManager.Instance.PlayOneShot(levelStarting);
@@ -108,23 +100,23 @@ public class MapLoad : MonoBehaviour
                 Transform t = null;
                 if (m[i][j] == 'o')
                 {
-                    t = Instantiate(wall, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation) as Transform;
+                    t = Instantiate(wall, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation);
                 }
                 else if (m[i][j] == 'Q')
                 {
-                    t = Instantiate(iron, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation) as Transform;
+                    t = Instantiate(iron, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation);
                 }
                 else if (m[i][j] == 'b')
                 {
-                    t = Instantiate(bush, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation) as Transform;
+                    t = Instantiate(bush, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation);
                 }
                 else if (m[i][j] == 'i')
                 {
-                    t = Instantiate(ice, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation) as Transform;
+                    t = Instantiate(ice, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation);
                 }
                 else if (m[i][j] == 'w')
                 {
-                    t = Instantiate(water, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation) as Transform;
+                    t = Instantiate(water, new Vector3(j - 13, 13 - (i + 1), 0), wall.rotation);
                 }
                 if (m[i][j] != '.')
                 {

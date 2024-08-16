@@ -147,7 +147,14 @@ public class Shooting : NetworkBehaviour
     {
         if (isNPC)
         {
-            Destroy(gameObject);
+            if (IsServer)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                DestroyEnemyRpc();
+            }
         }
         else if (!isNPC)
         {
@@ -174,6 +181,12 @@ public class Shooting : NetworkBehaviour
         }
     }
 
+    [Rpc(SendTo.Server)]
+    private void DestroyEnemyRpc()
+    {
+        Destroy(gameObject);
+    }
+
     IEnumerator FinishGameAfter(float time)
     {
         yield return new WaitForSeconds(time / 3);
@@ -181,6 +194,6 @@ public class Shooting : NetworkBehaviour
         yield return new WaitForSeconds(time / 3 * 2);
 
         anim.SetBool("hit", false);
-        GameManager.Instance.Eagle.SendMessage("FinishGame");
+        GameManager.Instance.FinishGame();
     }
 }
