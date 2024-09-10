@@ -33,7 +33,6 @@ public class GameManager : NetworkBehaviour
     public List<Enemy> Enemies => _spawnManager.Enemies;
     public Transform Eagle => _eagle.transform;
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
-    public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
 
     public PowerUp PowerUp { get; private set; }

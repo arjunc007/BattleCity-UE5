@@ -125,6 +125,11 @@ public class Enemy : NetworkBehaviour
         _anim.SetBool("isMoving", value);
     }
 
+    public void Hit()
+    {
+        _anim.SetBool("hit", true);
+    }
+
     private IEnumerator ChangePostition()
     {
         changingPos = true;
