@@ -96,6 +96,11 @@ public class Enemy : NetworkBehaviour
         anim.SetFloat("input_y", input_y.Value);
     }
 
+    public void Hit()
+    {
+        _anim.SetBool("hit", true);
+    }
+
     private IEnumerator ChangePostition()
     {
         changingPos = true;

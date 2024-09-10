@@ -64,14 +64,9 @@ public class PowerUp : MonoBehaviour {
     // Message receiver from "Player" (PowerUp)
     public void DestroyAllTanks()
     {
-        Transform[] ts = GameManager.Instance.EnemyHolder.GetComponentsInChildren<Transform>();
-
-        foreach (var t in ts)
+        foreach (var enemy in GameManager.Instance.Enemies)
         {
-            if (!t.gameObject.name.Contains("Generated"))
-            {
-                t.GetComponent<Animator>().SetBool("hit", true);
-            }
+            enemy.Hit();
         }
     }
 

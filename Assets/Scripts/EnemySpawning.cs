@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemySpawning : NetworkBehaviour
 {
-    private NetworkList<int> tanks;
+    private NetworkList<int> _tanks;
     private Animator anim;
     System.Random r;
 
@@ -18,7 +18,7 @@ public class EnemySpawning : NetworkBehaviour
 
     private void Awake()
     {
-        tanks = new NetworkList<int>();
+        _tanks = new NetworkList<int>();
     }
 
     public override void OnNetworkSpawn()
@@ -29,7 +29,7 @@ public class EnemySpawning : NetworkBehaviour
 
         for (int i = 0; i < 20; i++)
         {
-            tanks.Add((r.Next(50) % 4) + 1);
+            _tanks.Add((r.Next(50) % 4) + 1);
         }
     }
 
@@ -90,22 +90,22 @@ public class EnemySpawning : NetworkBehaviour
 
         Enemy enemy = null;
 
-        if (tanks[next.Value] == 1)
+        if (_tanks[next.Value] == 1)
         {
             enemy = Instantiate(easyTank, transform.position, easyTank.rotation).GetComponent<Enemy>();
             enemy.GetComponent<NetworkObject>().Spawn();
         }
-        else if (tanks[next.Value] == 2)
+        else if (_tanks[next.Value] == 2)
         {
             enemy = Instantiate(fastTank, transform.position, fastTank.rotation).GetComponent<Enemy>();
             enemy.GetComponent<NetworkObject>().Spawn();
         }
-        else if (tanks[next.Value] == 3)
+        else if (_tanks[next.Value] == 3)
         {
             enemy = Instantiate(mediumTank, transform.position, mediumTank.rotation).GetComponent<Enemy>().GetComponent<Enemy>();
             enemy.GetComponent<NetworkObject>().Spawn();
         }
-        else if (tanks[next.Value] == 4)
+        else if (_tanks[next.Value] == 4)
         {
             enemy = Instantiate(strongTank, transform.position, strongTank.rotation).GetComponent<Enemy>();
             enemy.GetComponent<NetworkObject>().Spawn();
@@ -135,6 +135,6 @@ public class EnemySpawning : NetworkBehaviour
 
     public override void OnDestroy()
     {
-        tanks?.Dispose();
+        _tanks?.Dispose();
     }
 }

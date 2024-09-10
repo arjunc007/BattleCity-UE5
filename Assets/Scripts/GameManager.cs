@@ -29,7 +29,6 @@ public class GameManager : NetworkBehaviour
     public EnemySpawning EnemySpawner => _spawnManager;
     public Transform Eagle => _eagle.transform;
     public Transform BulletHolder => _mapLoader.generatedBulletFolder;
-    public Transform EnemyHolder => _mapLoader.generatedEnemyFolder;
     public Transform WallsHolder => _mapLoader.generatedWallFolder;
 
     public override void OnNetworkSpawn()
