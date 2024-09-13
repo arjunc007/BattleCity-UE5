@@ -39,7 +39,7 @@ public class Bullet : MonoBehaviour
     }
 
     // message receiver from "Shooting" or "Enemy"
-    void SetShooterTank(Transform tank)
+    public void SetShooterTank(Transform tank)
     {
         this.tank = tank;
     }
@@ -75,6 +75,9 @@ public class Bullet : MonoBehaviour
 
     void OnDestroy()
     {
-        if (tank != null) tank.NotNull((t) => t.gameObject.SendMessage("SetShooting", false));
+        if (tank != null)
+        {
+            tank.NotNull((t) => t.gameObject.SendMessage("SetShooting", false));
+        }
     }
 }

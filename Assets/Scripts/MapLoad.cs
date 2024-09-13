@@ -43,35 +43,19 @@ public class MapLoad : MonoBehaviour
         DeleteChilds(generatedWallFolder);
         DeleteChilds(generatedBulletFolder);
 
-        //player1.SendMessage("ResetPosition");
-        //player1.GetComponent<Animator>().SetBool("hit", false);
-        //player1.SendMessage("SetShooting", false);
-        //player1.SendMessage("SetShooting", false);
-        //player1.SendMessage("SetShield", 6);
-
-        //if (_multiplayer)
-        //{
-        //    player2.SendMessage("ResetPosition");
-        //    player2.GetComponent<Animator>().SetBool("hit", false);
-        //    player2.SendMessage("SetShooting", false);
-        //    player2.SendMessage("SetShooting", false);
-        //    player2.SendMessage("SetShield", 6);
-        //}
-        //else
-        //{
-        //    player2.GetComponent<Transform>().position = new Vector3(0, -155, 0);
-        //}
-
+        //Player reset
+        GameManager.Instance.ResetPlayers();
 
         // Enemy spawning reset
         GameManager.Instance.EnemySpawner.Reset();
+
+        // powerUp reset
+        GameManager.Instance.PowerUp.Reset();
 
         // Read map file
         string[] m = System.IO.File.ReadAllLines(@"Assets/Maps/map" + currentLevel + ".txt");
         GenerateObjects(m);
 
-        // powerUp reset
-        GameManager.Instance.PowerUp.Reset();
 
         // play a sound
         AudioManager.Instance.PlayOneShot(levelStarting);

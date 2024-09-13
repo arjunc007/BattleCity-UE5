@@ -1,58 +1,62 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private Shooting _shooting;
+    [SerializeField] private PlayerMovement _movement;
     public int level = 1;
     public int lives = 3;
     public Transform bulletWeak;
     public Transform bulletFast;
     public Transform bulletStrong;
-    
+
     public Animator shieldAnim;
 
     public int shieldTime = 0;
 
+    private Animator _anim;
+
     void Start()
     {
         level = 1;
+        _anim = GetComponent<Animator>();
+        _shooting.Initialize(this);
+        GameManager.Instance.RegisterPlayer(this);
     }
 
     void Update()
     {
         if (level == 1)
         {
-            gameObject.SendMessage("SetBullet", bulletWeak);
-            gameObject.SendMessage("SetMaxBullets", 1);
+            _shooting.SetBullet(bulletWeak);
+            _shooting.SetMaxBullets(1);
         }
         else if (level == 2)
         {
-            gameObject.SendMessage("SetBullet", bulletFast);
-            gameObject.SendMessage("SetMaxBullets", 1);
+            _shooting.SetBullet(bulletFast);
+            _shooting.SetMaxBullets(1);
         }
         else if (level == 3)
         {
-            gameObject.SendMessage("SetBullet", bulletFast);
-            gameObject.SendMessage("SetMaxBullets", 2);
+            _shooting.SetBullet(bulletFast);
+            _shooting.SetMaxBullets(2);
         }
         else if (level == 4)
         {
-            gameObject.SendMessage("SetBullet", bulletStrong);
-            gameObject.SendMessage("SetMaxBullets", 2);
+            _shooting.SetBullet(bulletStrong);
+            _shooting.SetMaxBullets(2);
         }
 
-        gameObject.GetComponent<Animator>().SetInteger("level", level);
+        _anim.SetInteger("level", level);
     }
 
     // Bonus taken
-    public void OnTriggerEnter2D(Collider2D collision)
+    public void OnTriggerEnter2D(Collider2D other)
     {
-        Transform other = collision.GetComponent<Transform>();
-        
-        if (other.name.Contains("PowerUp"))
+        if (other.TryGetComponent<PowerUp>(out var powerup))
         {
-            int bonus = Mathf.RoundToInt(other.GetComponent<Animator>().GetFloat("bonus"));
+            int bonus = Mathf.RoundToInt(powerup.GetComponent<Animator>().GetFloat("bonus"));
 
             if (bonus == 1)
             {
@@ -60,11 +64,11 @@ public class Player : MonoBehaviour
             }
             if (bonus == 2)
             {
-                other.gameObject.SendMessage("DestroyAllTanks");
+                powerup.DestroyAllTanks();
             }
             if (bonus == 3)
             {
-                other.gameObject.SendMessage("FreezeTime");
+                powerup.FreezeTime();
             }
             if (bonus == 4)
             {
@@ -75,12 +79,12 @@ public class Player : MonoBehaviour
                 lives++;
             }
 
-            other.gameObject.SendMessage("HidePowerUp");
+            powerup.HidePowerUp();
         }
     }
 
     // Message receiver from "Map load" and/ "this"
-    private void SetShield(int time)
+    public void SetShield(int time)
     {
         if (shieldTime <= 0)
         {
@@ -90,7 +94,7 @@ public class Player : MonoBehaviour
 
         shieldTime = time;
         shieldAnim.SetBool("isOn", true);
-        gameObject.GetComponent<Animator>().SetBool("shield", true);
+        _anim.SetBool("shield", true);
     }
 
     IEnumerator ShieldEnumerator()
@@ -103,7 +107,7 @@ public class Player : MonoBehaviour
         if (shieldTime <= 0)
         {
             shieldAnim.SetBool("isOn", false);
-            gameObject.GetComponent<Animator>().SetBool("shield", false);
+            _anim.SetBool("shield", false);
         }
     }
 
@@ -131,4 +135,16 @@ public class Player : MonoBehaviour
         this.lives = lives;
     }
 
+    public void Reset()
+    {
+        _movement.ResetPosition();
+        _anim.SetBool("hit", false);
+        _shooting.SetShooting(false);
+        SetShield(6);
+    }
+
+    public void ResetPosition()
+    {
+        _movement.ResetPosition();
+    }
 }

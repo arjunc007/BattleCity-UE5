@@ -10,12 +10,25 @@ public class Shooting : NetworkBehaviour
     public AudioClip shotSound;
     public AudioClip gameOver;
 
+    private Player _owner;
     private Animator anim;
     InputManager input;
     private int alreadyShot = 0;
     private int maxBulletsAtOneTime = 1;
 
     private bool CanShoot => maxBulletsAtOneTime > alreadyShot;
+
+    public void Initialize(Player owner)
+    {
+        if (owner == null)
+        {
+            _owner = owner;
+        }
+        else
+        {
+            Debug.Log("Script already owned by " + owner.gameObject.name);
+        }
+    }
 
     void Start()
     {
@@ -90,15 +103,14 @@ public class Shooting : NetworkBehaviour
         // Creates new bullet
         Vector3 pos = transform.position + new Vector3(x, y, 0);
 
-        Transform newBullet = Instantiate(bullet, pos, transform.rotation, GameManager.Instance.BulletHolder);
-        newBullet.eulerAngles += new Vector3(0, 0, r);
+        Bullet newBullet = Instantiate(bullet, pos, Quaternion.Euler(0.0f, 0.0f, r), GameManager.Instance.BulletHolder).GetComponent<Bullet>();
 
         // Passes variables x and y
         Animator a = newBullet.GetComponent<Animator>();
         a.SetFloat("input_x", x);
         a.SetFloat("input_y", y);
 
-        a.gameObject.SendMessage("SetShooterTank", transform);
+        newBullet.SetShooterTank(transform);
 
         // plays a sound
 
@@ -142,7 +154,6 @@ public class Shooting : NetworkBehaviour
         maxBulletsAtOneTime = max;
     }
 
-
     public void Destroy()
     {
         if (isNPC)
@@ -158,11 +169,11 @@ public class Shooting : NetworkBehaviour
         }
         else if (!isNPC)
         {
-            transform.position = new Vector3(120, 20, 0);
-            transform.SendMessage("SetLevel", 1);
+            _owner.ResetPosition();
+            _owner.SetLevel(1);
 
-            ArgsPointer<int> pointer = new ArgsPointer<int>();
-            transform.SendMessage("GetLives", pointer);
+            ArgsPointer<int> pointer = new();
+            _owner.GetLives(pointer);
 
             if (pointer.Args[0] <= 0)
             {
@@ -172,10 +183,10 @@ public class Shooting : NetworkBehaviour
             {
                 this.DoAfter(1.5f, () =>
                 {
-                    transform.SendMessage("ResetPosition");
-                    transform.GetComponent<Animator>().SetBool("hit", false);
+                    _owner.ResetPosition();
+                    anim.SetBool("hit", false);
                     alreadyShot = 0;
-                    SendMessage("SetShield", 6);
+                    _owner.SetShield(6);
                 });
             }
         }

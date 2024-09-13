@@ -16,7 +16,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private EnemySpawning _spawnManager;
 
     [SerializeField] private Eagle _eagle;
-    [SerializeField] private Transform[] _players;
+    private List<Player> _players = new();
     [SerializeField] private Transform[] _spawnPositions;
     [SerializeField] private Transform _powerupPrefab;
 
@@ -113,6 +113,14 @@ public class GameManager : NetworkBehaviour
         IsMultiplayer = true;
     }
 
+    public void RegisterPlayer(Player player)
+    {
+        if (!_players.Contains(player))
+        {
+            _players.Add(player);
+        }
+    }
+
     [Rpc(SendTo.ClientsAndHost)]
     public void ReadyPlayerRpc(ulong clientId)
     {
@@ -126,6 +134,14 @@ public class GameManager : NetworkBehaviour
             var spawner = Instantiate(_spawnManager.gameObject);
             spawner.GetComponent<NetworkObject>().Spawn();
             StartClientGameRpc();
+        }
+    }
+
+    public void ResetPlayers()
+    {
+        foreach (var player in _players)
+        {
+            player.Reset();
         }
     }
 
@@ -146,10 +162,12 @@ public class GameManager : NetworkBehaviour
 
     public void FinishGame()
     {
-        _players[0].SendMessage("SetLevel", 1);
-        _players[0].SendMessage("SetLives", 3);
-        //player2.SendMessage("SetLevel", 1);
-        //player2.SendMessage("SetLives", 3);
+        foreach (var player in _players)
+        {
+            player.SetLevel(1);
+            player.SetLives(3);
+        }
+
         _eagle.SetDestroyed(false);
         _mapLoader.LoadMap(1);
     }

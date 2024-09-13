@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4253648319
+  GlobalObjectIdHash: 3705540075
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -362,6 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98ea1e959568248a673388ab8574cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _shooting: {fileID: 6975786677925126238}
+  _movement: {fileID: 6929453648322962135}
   level: 1
   lives: 3
   bulletWeak: {fileID: 3701078469901079055, guid: 090749271657fd64dbc4b72b2412379f,
