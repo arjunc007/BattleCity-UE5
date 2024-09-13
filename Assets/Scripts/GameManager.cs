@@ -145,6 +145,11 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public void LoadNextLevel()
+    {
+        _mapLoader.LoadMap(true);
+    }
+
     [Rpc(SendTo.ClientsAndHost)]
     private void StartClientGameRpc()
     {
