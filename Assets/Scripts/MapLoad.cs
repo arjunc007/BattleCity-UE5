@@ -26,7 +26,7 @@ public class MapLoad : MonoBehaviour
         LoadMap(level);
     }
 
-    private void LoadMap(bool won)
+    public void LoadMap(bool won)
     {
         if (won)
         {

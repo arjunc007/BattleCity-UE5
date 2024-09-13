@@ -75,6 +75,10 @@ public class EnemySpawning : NetworkBehaviour
         {
             SpawnEnemyRpc();
         }
+        else if (next.Value >= 20 && _enemies.Count <= 1)
+        {
+            GameManager.Instance.LoadNextLevel();
+        }
     }
 
     [Rpc(SendTo.ClientsAndHost)]
