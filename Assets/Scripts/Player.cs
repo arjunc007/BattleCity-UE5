@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ITank
 {
     [SerializeField] private Shooting _shooting;
     [SerializeField] private PlayerMovement _movement;
+    public bool IsNPC;
     public int level = 1;
     public int lives = 3;
     public Transform bulletWeak;
@@ -13,7 +14,9 @@ public class Player : MonoBehaviour
 
     public Animator shieldAnim;
 
-    public int shieldTime = 0;
+    public bool IsShieldActive => shieldTime > 0;
+
+    private int shieldTime = 0;
 
     private Animator _anim;
 
@@ -104,11 +107,10 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(1);
             shieldTime--;
         }
-        if (shieldTime <= 0)
-        {
-            shieldAnim.SetBool("isOn", false);
-            _anim.SetBool("shield", false);
-        }
+
+        var shielded = shieldTime > 0;
+        shieldAnim.SetBool("isOn", shielded);
+        _anim.SetBool("shield", shielded);
     }
 
     // message receiver from "load map"
@@ -133,6 +135,44 @@ public class Player : MonoBehaviour
     public void SetLives(int lives)
     {
         this.lives = lives;
+    }
+
+    public void Destroy()
+    {
+        if (IsNPC)
+        {
+            if (_shooting.IsServer)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                _shooting.DestroyEnemyRpc();
+            }
+        }
+        else if (!IsNPC)
+        {
+            ResetPosition();
+            SetLevel(1);
+
+            ArgsPointer<int> pointer = new();
+            GetLives(pointer);
+
+            if (pointer.Args[0] <= 0)
+            {
+                StartCoroutine(_shooting.FinishGameAfter(3));
+            }
+            else
+            {
+                this.DoAfter(1.5f, () =>
+                {
+                    ResetPosition();
+                    _anim.SetBool("hit", false);
+                    _shooting.AlreadyShot = 0;
+                    SetShield(6);
+                });
+            }
+        }
     }
 
     public void Reset()

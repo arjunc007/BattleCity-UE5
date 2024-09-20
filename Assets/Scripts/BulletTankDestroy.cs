@@ -2,31 +2,33 @@
 
 public class BulletTankDestroy : MonoBehaviour
 {
+    [SerializeField] private Animator _bulletAnim;
     public bool isFriendly;
     public AudioClip tankDestroy;
     public AudioClip ironHit;
 
+
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        Animator bulletAnim = gameObject.GetComponent<Animator>();
-
         Transform tank = collider.GetComponent<Transform>();
         Animator tankAnim = collider.GetComponent<Animator>();
 
+        collider.TryGetComponent<Enemy>(out var enemy);
+        collider.TryGetComponent<Player>(out var player);
+
         // Show power up if was red
-        if (tank.name.Contains("Tank") && isFriendly
-            && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
+        if (enemy != null && isFriendly
+            && !_bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
             GameManager.Instance.PowerUp.ShowPowerUp(tankAnim.GetInteger("bonus"));
-            tank.SendMessage("SetBonus", 0, 0);
-            tankAnim.SetInteger("bonus", 0);
+            enemy.SetBonus(0);
         }
 
         // Destroy tank and bullet
         if (((tank.name.Contains("Tank") && isFriendly) || (tank.name.Contains("Player") && !isFriendly))
-            && !bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
+            && !_bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
-            bulletAnim.SetBool("hit", true);
+            _bulletAnim.SetBool("hit", true);
 
             if (!tank.name.Contains("Player") || !tankAnim.GetBool("shield"))
             {

@@ -2,7 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class Enemy : NetworkBehaviour
+public class Enemy : NetworkBehaviour, ITank
 {
     public float MaxSpeed = 0.10f;
     public NetworkVariable<int> bonus = new NetworkVariable<int>();
@@ -163,6 +163,7 @@ public class Enemy : NetworkBehaviour
         {
             this.bonus.Value = bonus;
         }
+        _anim.SetInteger("bonus", bonus);
     }
 
     //Message receiver from "BulletTankDestroy"
@@ -172,5 +173,10 @@ public class Enemy : NetworkBehaviour
         {
             this.lives.Value = lives;
         }
+    }
+
+    public void Destroy()
+    {
+
     }
 }

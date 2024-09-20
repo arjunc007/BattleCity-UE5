@@ -5,18 +5,17 @@ using UnityEngine;
 public class Shooting : NetworkBehaviour
 {
     public Transform bullet;
-    public bool isNPC;
     public int player;
     public AudioClip shotSound;
     public AudioClip gameOver;
+    public int AlreadyShot = 0;
 
     private Player _owner;
     private Animator anim;
     InputManager input;
-    private int alreadyShot = 0;
     private int maxBulletsAtOneTime = 1;
 
-    private bool CanShoot => maxBulletsAtOneTime > alreadyShot;
+    private bool CanShoot => maxBulletsAtOneTime > AlreadyShot;
 
     public void Initialize(Player owner)
     {
@@ -44,11 +43,11 @@ public class Shooting : NetworkBehaviour
         }
 
         if (CanShoot && !anim.GetBool("hit") &&
-            ((!isNPC && input.Fire)
-            || isNPC))
+            ((!_owner.IsNPC && input.Fire)
+            || _owner.IsNPC))
         {
-            alreadyShot++;
-            if (isNPC)
+            AlreadyShot++;
+            if (_owner.IsNPC)
             {
                 StartCoroutine(DelayShootingFor(0.2f));
             }
@@ -71,7 +70,7 @@ public class Shooting : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost)]
     private void LaunchBulletRpc()
     {
-        if (!isNPC)
+        if (!_owner.IsNPC)
         {
             Debug.Log($"{OwnerClientId} Fire");
         }
@@ -114,7 +113,7 @@ public class Shooting : NetworkBehaviour
 
         // plays a sound
 
-        if (!isNPC)
+        if (!_owner.IsNPC)
         {
             AudioManager.Instance.PlayOneShot(shotSound);
         }
@@ -125,21 +124,21 @@ public class Shooting : NetworkBehaviour
     {
         if (shouldAddBullet)
         {
-            alreadyShot++;
+            AlreadyShot++;
         }
         else
         {
-            alreadyShot--;
+            AlreadyShot--;
         }
 
-        if (alreadyShot < 0)
+        if (AlreadyShot < 0)
         {
-            alreadyShot = 0;
+            AlreadyShot = 0;
         }
 
-        if (alreadyShot > maxBulletsAtOneTime)
+        if (AlreadyShot > maxBulletsAtOneTime)
         {
-            alreadyShot = maxBulletsAtOneTime;
+            AlreadyShot = maxBulletsAtOneTime;
         }
     }
 
@@ -154,51 +153,13 @@ public class Shooting : NetworkBehaviour
         maxBulletsAtOneTime = max;
     }
 
-    public void Destroy()
-    {
-        if (isNPC)
-        {
-            if (IsServer)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                DestroyEnemyRpc();
-            }
-        }
-        else if (!isNPC)
-        {
-            _owner.ResetPosition();
-            _owner.SetLevel(1);
-
-            ArgsPointer<int> pointer = new();
-            _owner.GetLives(pointer);
-
-            if (pointer.Args[0] <= 0)
-            {
-                StartCoroutine(FinishGameAfter(3));
-            }
-            else
-            {
-                this.DoAfter(1.5f, () =>
-                {
-                    _owner.ResetPosition();
-                    anim.SetBool("hit", false);
-                    alreadyShot = 0;
-                    _owner.SetShield(6);
-                });
-            }
-        }
-    }
-
     [Rpc(SendTo.Server)]
-    private void DestroyEnemyRpc()
+    public void DestroyEnemyRpc()
     {
         Destroy(gameObject);
     }
 
-    IEnumerator FinishGameAfter(float time)
+    public IEnumerator FinishGameAfter(float time)
     {
         yield return new WaitForSeconds(time / 3);
         gameOver.NotNull((t) => AudioManager.Instance.PlayOneShot(t));
