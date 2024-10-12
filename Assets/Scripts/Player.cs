@@ -1,11 +1,14 @@
 ﻿using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
-public class Player : MonoBehaviour, ITank
+public class Player : NetworkBehaviour, ITank
 {
-    [SerializeField] private Shooting _shooting;
+    public Transform bullet;
+    public AudioClip shotSound;
+    public AudioClip gameOver;
     [SerializeField] private PlayerMovement _movement;
-    public bool IsNPC;
     public int level = 1;
     public int lives = 3;
     public Transform bulletWeak;
@@ -20,38 +23,79 @@ public class Player : MonoBehaviour, ITank
 
     private Animator _anim;
 
+    private InputManager input;
+
+    public int AlreadyShot = 0;
+    private int maxBulletsAtOneTime = 1;
+    private bool CanShoot => maxBulletsAtOneTime > AlreadyShot;
+
     void Start()
     {
-        level = 1;
+        input = InputManager.Instance;
         _anim = GetComponent<Animator>();
-        _shooting.Initialize(this);
+        SetLevel(1);
         GameManager.Instance.RegisterPlayer(this);
     }
 
     void Update()
     {
-        if (level == 1)
+        if (!IsOwner || !GameManager.Instance.IsPlaying)
         {
-            _shooting.SetBullet(bulletWeak);
-            _shooting.SetMaxBullets(1);
-        }
-        else if (level == 2)
-        {
-            _shooting.SetBullet(bulletFast);
-            _shooting.SetMaxBullets(1);
-        }
-        else if (level == 3)
-        {
-            _shooting.SetBullet(bulletFast);
-            _shooting.SetMaxBullets(2);
-        }
-        else if (level == 4)
-        {
-            _shooting.SetBullet(bulletStrong);
-            _shooting.SetMaxBullets(2);
+            return;
         }
 
-        _anim.SetInteger("level", level);
+        if (CanShoot && !_anim.GetBool("hit") && input.Fire)
+        {
+            AlreadyShot++;
+
+            LaunchBulletRpc();
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void LaunchBulletRpc()
+    {
+        Debug.Log($"{OwnerClientId} Fire");
+
+        float x = _anim.GetFloat("input_x");
+        float y = _anim.GetFloat("input_y");
+
+        // Calculate rotation angle
+        float r = 0;
+        if (x == 0 && y == 1)
+        {
+            r = 270;
+        }
+
+        if (x == 1 && y == 0)
+        {
+            r = 180;
+        }
+
+        if (x == 0 && y == -1)
+        {
+            r = 90;
+        }
+
+        if (x == -1 && y == 0)
+        {
+            r = 0;
+        }
+
+        // Creates new bullet
+        Vector3 pos = transform.position + new Vector3(x, y, 0);
+
+        Bullet newBullet = Instantiate(bullet, pos, Quaternion.Euler(0.0f, 0.0f, r), GameManager.Instance.BulletHolder).GetComponent<Bullet>();
+
+        // Passes variables x and y
+        Animator a = newBullet.GetComponent<Animator>();
+        a.SetFloat("input_x", x);
+        a.SetFloat("input_y", y);
+
+        newBullet.SetShooterTank(transform);
+
+        // plays a sound
+        AudioManager.Instance.PlayOneShot(shotSound);
     }
 
     // Bonus taken
@@ -63,7 +107,7 @@ public class Player : MonoBehaviour, ITank
 
             if (bonus == 1)
             {
-                level++;
+                SetLevel(level + 1);
             }
             if (bonus == 2)
             {
@@ -117,6 +161,40 @@ public class Player : MonoBehaviour, ITank
     public void SetLevel(int level)
     {
         this.level = level;
+
+        if (level == 1)
+        {
+            SetBullet(bulletWeak);
+            SetMaxBullets(1);
+        }
+        else if (level == 2)
+        {
+            SetBullet(bulletFast);
+            SetMaxBullets(1);
+        }
+        else if (level == 3)
+        {
+            SetBullet(bulletFast);
+            SetMaxBullets(2);
+        }
+        else if (level == 4)
+        {
+            SetBullet(bulletStrong);
+            SetMaxBullets(2);
+        }
+
+        _anim.SetInteger("level", level);
+    }
+
+    //Message receiver from "Player"
+    public void SetBullet(Transform bullet)
+    {
+        this.bullet = bullet;
+    }
+    //Message receiver from "Player"
+    public void SetMaxBullets(int max)
+    {
+        maxBulletsAtOneTime = max;
     }
 
     // message receiver from "BulletTankDestroy"
@@ -140,39 +218,25 @@ public class Player : MonoBehaviour, ITank
 
     public void Destroy()
     {
-        if (IsNPC)
+        ResetPosition();
+        SetLevel(1);
+
+        ArgsPointer<int> pointer = new();
+        GetLives(pointer);
+
+        if (pointer.Args[0] <= 0)
         {
-            if (_shooting.IsServer)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                _shooting.DestroyEnemyRpc();
-            }
+            StartCoroutine(FinishGameAfter(3));
         }
-        else if (!IsNPC)
+        else
         {
-            ResetPosition();
-            SetLevel(1);
-
-            ArgsPointer<int> pointer = new();
-            GetLives(pointer);
-
-            if (pointer.Args[0] <= 0)
+            this.DoAfter(1.5f, () =>
             {
-                StartCoroutine(_shooting.FinishGameAfter(3));
-            }
-            else
-            {
-                this.DoAfter(1.5f, () =>
-                {
-                    ResetPosition();
-                    _anim.SetBool("hit", false);
-                    _shooting.AlreadyShot = 0;
-                    SetShield(6);
-                });
-            }
+                ResetPosition();
+                _anim.SetBool("hit", false);
+                AlreadyShot = 0;
+                SetShield(6);
+            });
         }
     }
 
@@ -180,12 +244,44 @@ public class Player : MonoBehaviour, ITank
     {
         _movement.ResetPosition();
         _anim.SetBool("hit", false);
-        _shooting.SetShooting(false);
+        SetShooting(false);
         SetShield(6);
+    }
+
+    public void SetShooting(bool shouldAddBullet)
+    {
+        if (shouldAddBullet)
+        {
+            AlreadyShot++;
+        }
+        else
+        {
+            AlreadyShot--;
+        }
+
+        if (AlreadyShot < 0)
+        {
+            AlreadyShot = 0;
+        }
+
+        if (AlreadyShot > maxBulletsAtOneTime)
+        {
+            AlreadyShot = maxBulletsAtOneTime;
+        }
     }
 
     public void ResetPosition()
     {
         _movement.ResetPosition();
+    }
+
+    public IEnumerator FinishGameAfter(float time)
+    {
+        yield return new WaitForSeconds(time / 3);
+        gameOver.NotNull((t) => AudioManager.Instance.PlayOneShot(t));
+        yield return new WaitForSeconds(time / 3 * 2);
+
+        _anim.SetBool("hit", false);
+        GameManager.Instance.FinishGame();
     }
 }

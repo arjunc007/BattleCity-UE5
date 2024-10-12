@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Enemy : NetworkBehaviour, ITank
 {
+    public Transform bullet;
     public float MaxSpeed = 0.10f;
     public NetworkVariable<int> bonus = new NetworkVariable<int>();
     private NetworkVariable<int> lives = new NetworkVariable<int>(1);
@@ -14,6 +16,10 @@ public class Enemy : NetworkBehaviour, ITank
     private NetworkVariable<float> input_y = new NetworkVariable<float>(-1);
     private bool isMoving;
     private bool changingPos;
+
+    public int AlreadyShot = 0;
+    private int maxBulletsAtOneTime = 1;
+    private bool CanShoot => maxBulletsAtOneTime > AlreadyShot;
 
     private System.Random r = new System.Random();
 
@@ -32,6 +38,12 @@ public class Enemy : NetworkBehaviour, ITank
         if (!GameManager.Instance.IsPlaying)
         {
             return;
+        }
+
+        if (CanShoot && !_anim.GetBool("hit"))
+        {
+            AlreadyShot++;
+            StartCoroutine(DelayShootingFor(0.2f));
         }
 
         _anim.SetFloat("input_x", input_x.Value);
@@ -84,6 +96,56 @@ public class Enemy : NetworkBehaviour, ITank
             _anim.SetFloat("input_y", input_y.Value);
 
         }
+    }
+
+    private IEnumerator DelayShootingFor(float time)
+    {
+        yield return new WaitForSeconds(time);
+        if (!_anim.GetBool("hit"))
+        {
+            LaunchBulletRpc();
+        }
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    private void LaunchBulletRpc()
+    {
+        float x = _anim.GetFloat("input_x");
+        float y = _anim.GetFloat("input_y");
+
+        // Calculate rotation angle
+        float r = 0;
+        if (x == 0 && y == 1)
+        {
+            r = 270;
+        }
+
+        if (x == 1 && y == 0)
+        {
+            r = 180;
+        }
+
+        if (x == 0 && y == -1)
+        {
+            r = 90;
+        }
+
+        if (x == -1 && y == 0)
+        {
+            r = 0;
+        }
+
+        // Creates new bullet
+        Vector3 pos = transform.position + new Vector3(x, y, 0);
+
+        Bullet newBullet = Instantiate(bullet, pos, Quaternion.Euler(0.0f, 0.0f, r), GameManager.Instance.BulletHolder).GetComponent<Bullet>();
+
+        // Passes variables x and y
+        Animator a = newBullet.GetComponent<Animator>();
+        a.SetFloat("input_x", x);
+        a.SetFloat("input_y", y);
+
+        newBullet.SetShooterTank(transform);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -177,6 +239,19 @@ public class Enemy : NetworkBehaviour, ITank
 
     public void Destroy()
     {
+        if (IsServer)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            DestroyEnemyRpc();
+        }
+    }
 
+    [Rpc(SendTo.Server)]
+    public void DestroyEnemyRpc()
+    {
+        Destroy(gameObject);
     }
 }

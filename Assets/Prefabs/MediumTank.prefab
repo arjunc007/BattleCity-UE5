@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1722963950533168424}
   - component: {fileID: 924234856621774278}
   - component: {fileID: 5493545337479123880}
-  - component: {fileID: 275193577139572294}
   - component: {fileID: 1890291264610092575}
   m_Layer: 0
   m_Name: MediumTank
@@ -168,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 588201696
+  GlobalObjectIdHash: 4171109869
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -189,26 +188,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fac48a5227d61f145bce2cd1112f8a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxSpeed: 0.08
-  bonus: 0
-  _lives: 1
---- !u!114 &275193577139572294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5311369826182258683}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0711346449190ba4ebfe3ae4bae37ff9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   bullet: {fileID: 7257325789057947445, guid: 716f510733b68fe46b0ba19ebecaa376, type: 3}
-  isNPC: 1
-  player: 0
-  shotSound: {fileID: 8300000, guid: 421c9ae33653d9a4ba44ebdfc0d8cd2b, type: 3}
-  gameOver: {fileID: 8300000, guid: a19d76f68e98c704c97701923767518c, type: 3}
+  MaxSpeed: 0.08
+  bonus:
+    m_InternalValue: 0
+  AlreadyShot: 0
 --- !u!50 &1890291264610092575
 Rigidbody2D:
   serializedVersion: 4
