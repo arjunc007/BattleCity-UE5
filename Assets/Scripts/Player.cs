@@ -123,6 +123,7 @@ public class Player : MonoBehaviour, ITank
     public void Hit()
     {
         lives--;
+        _anim.SetBool("hit", true);
     }
 
     // message receiver from "BulletTankDestroy"

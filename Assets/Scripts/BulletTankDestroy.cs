@@ -20,23 +20,22 @@ public class BulletTankDestroy : MonoBehaviour
         if (enemy != null && isFriendly
             && !_bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
-            GameManager.Instance.PowerUp.ShowPowerUp(tankAnim.GetInteger("bonus"));
+            GameManager.Instance.PowerUp.ShowPowerUp(enemy.bonus.Value);
             enemy.SetBonus(0);
         }
 
         // Destroy tank and bullet
-        if (((tank.name.Contains("Tank") && isFriendly) || (tank.name.Contains("Player") && !isFriendly))
+        if (((enemy != null && isFriendly) || (player != null && !isFriendly))
             && !_bulletAnim.GetBool("hit") && !tankAnim.GetBool("hit"))
         {
             _bulletAnim.SetBool("hit", true);
 
-            if (!tank.name.Contains("Player") || !tankAnim.GetBool("shield"))
+            if (player != null || !tankAnim.GetBool("shield"))
             {
                 // player
-                if (tank.name.Contains("Player"))
+                if (player != null)
                 {
-                    tank.SendMessage("Hit");
-                    tankAnim.SetBool("hit", true);
+                    player.Hit();
                     AudioManager.Instance.PlayOneShot(tankDestroy);
                 }
                 // not player
