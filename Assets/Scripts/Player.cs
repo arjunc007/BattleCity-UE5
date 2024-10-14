@@ -210,6 +210,11 @@ public class Player : NetworkBehaviour, ITank
         pointer.Args = new int[] { lives };
     }
 
+    public int GetLives()
+    {
+        return lives;
+    }
+
     // message receiver from "load map"
     public void SetLives(int lives)
     {

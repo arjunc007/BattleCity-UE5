@@ -228,6 +228,11 @@ public class Enemy : NetworkBehaviour, ITank
         _anim.SetInteger("bonus", bonus);
     }
 
+    public int GetLives()
+    {
+        return lives.Value;
+    }
+
     //Message receiver from "BulletTankDestroy"
     public void SetLives(int lives)
     {

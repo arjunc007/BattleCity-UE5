@@ -10,7 +10,7 @@ public class BulletTankDestroy : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        Transform tank = collider.GetComponent<Transform>();
+        collider.TryGetComponent<ITank>(out var tank);
         Animator tankAnim = collider.GetComponent<Animator>();
 
         collider.TryGetComponent<Enemy>(out var enemy);
@@ -39,7 +39,7 @@ public class BulletTankDestroy : MonoBehaviour
                     AudioManager.Instance.PlayOneShot(tankDestroy);
                 }
                 // not player
-                else if (tankAnim.GetInteger("lives") <= 1)
+                else if (tank.GetLives() <= 1)
                 {
                     tankAnim.SetBool("hit", true);
                     GameManager.Instance.EnemySpawner.RemoveEnemy(collider.GetComponent<Enemy>());
@@ -47,7 +47,7 @@ public class BulletTankDestroy : MonoBehaviour
                 }
                 else
                 {
-                    tank.SendMessage("SetLives", tankAnim.GetInteger("lives") - 1);
+                    tank.SetLives(tank.GetLives() - 1);
                     AudioManager.Instance.PlayOneShot(ironHit);
                 }
             }
