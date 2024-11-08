@@ -92,7 +92,7 @@ public class Player : NetworkBehaviour, ITank
         a.SetFloat("input_x", x);
         a.SetFloat("input_y", y);
 
-        newBullet.SetShooterTank(transform);
+        newBullet.SetShooterTank(this);
 
         // plays a sound
         AudioManager.Instance.PlayOneShot(shotSound);

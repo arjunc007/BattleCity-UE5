@@ -6,4 +6,6 @@ public interface ITank
     void Hit();
 
     void Destroy();
+
+    void SetShooting(bool shooting);
 }

@@ -145,7 +145,7 @@ public class Enemy : NetworkBehaviour, ITank
         a.SetFloat("input_x", x);
         a.SetFloat("input_y", y);
 
-        newBullet.SetShooterTank(transform);
+        newBullet.SetShooterTank(this);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -219,6 +219,27 @@ public class Enemy : NetworkBehaviour, ITank
         }
     }
 
+    public void SetShooting(bool shouldAddBullet)
+    {
+        if (shouldAddBullet)
+        {
+            AlreadyShot++;
+        }
+        else
+        {
+            AlreadyShot--;
+        }
+
+        if (AlreadyShot < 0)
+        {
+            AlreadyShot = 0;
+        }
+
+        if (AlreadyShot > maxBulletsAtOneTime)
+        {
+            AlreadyShot = maxBulletsAtOneTime;
+        }
+    }
     public void SetBonus(int bonus)
     {
         if (IsServer)
