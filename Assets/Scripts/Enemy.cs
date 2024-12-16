@@ -25,11 +25,6 @@ public class Enemy : NetworkBehaviour, ITank
 
     public override void OnNetworkSpawn()
     {
-        //transform.parent = GameManager.Instance.EnemyHolder;
-    }
-
-    void Start()
-    {
         _anim = gameObject.GetComponent<Animator>();
     }
 
