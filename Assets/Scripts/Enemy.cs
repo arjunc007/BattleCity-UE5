@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class Enemy : NetworkBehaviour, ITank
 {
@@ -35,7 +34,7 @@ public class Enemy : NetworkBehaviour, ITank
             return;
         }
 
-        if (CanShoot && !_anim.GetBool("hit"))
+        if (NetworkManager.IsServer && CanShoot && !_anim.GetBool("hit"))
         {
             AlreadyShot++;
             StartCoroutine(DelayShootingFor(0.2f));

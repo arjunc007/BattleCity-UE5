@@ -18,6 +18,9 @@ public class EnemySpawning : NetworkBehaviour
 
     public List<Enemy> Enemies => _enemies;
 
+    private const int MAX_TANKS = 5;
+    private const int MAX_TANKS_MP = 7;
+
     private void Awake()
     {
         _tanks = new NetworkList<int>();
@@ -71,7 +74,7 @@ public class EnemySpawning : NetworkBehaviour
         bool isMultiPlayer = GameManager.Instance.IsMultiplayer;
 
         // 4 tanks and 1 folder also counts, (if multiplayer, 6 tanks can be on screen)
-        if (next.Value < 20 && ((_enemies.Count < 5 && !isMultiPlayer) || (_enemies.Count < 7 && isMultiPlayer)))
+        if (next.Value < 20 && ((_enemies.Count < MAX_TANKS && !isMultiPlayer) || (_enemies.Count < MAX_TANKS_MP && isMultiPlayer)))
         {
             SpawnEnemyRpc();
         }

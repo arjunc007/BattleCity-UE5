@@ -2,7 +2,6 @@
 
 public class Bullet : MonoBehaviour
 {
-
     private Animator anim;
     private ITank tank;
 
